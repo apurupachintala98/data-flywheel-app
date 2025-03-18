@@ -144,9 +144,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
         try {
             const response = await ApiService.sendTextToSQL(payload);
-            console.log("API Response:", response);
-
-            const assistantMessage = { text: response?.result || "No response received.", fromUser: false };
+            const modelResponse = response?.modelreply?.response || "No valid response received.";
+            const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
             setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
         } catch (error) {

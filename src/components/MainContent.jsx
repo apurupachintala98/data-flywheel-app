@@ -19,6 +19,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [chatAnchorEl, setChatAnchorEl] = useState(null);
     const [selectedModel, setSelectedModel] = useState("Semantic model");
+    const [selectedModels, setSelectedModels] = useState([]); // Store selected files
+    const [isMultiSelect, setIsMultiSelect] = useState(true); 
     const [isHovered, setIsHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
 
@@ -26,7 +28,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         const fetchYamlFiles = async () => {
             try {
                 console.log("Fetching YAML files...");
-                const response = await ApiService.getPresets(); // Correct API call
+                const response = await ApiService.getCortexAnalystDetails(); // Correct API call
                 
                 if (response && Array.isArray(response)) { 
                     console.log("YAML Files received:", response); // Debugging log

@@ -23,18 +23,27 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
 
     useEffect(() => {
-        // Fetch YAML file names from API
-        const fetchAnalystDetails = async () => {
+        const fetchYamlFiles = async () => {
             try {
-                const response = await ApiService.getCortexAnalystDetails();
-                setYamlFiles(response.data); // Set the YAML file names in state
+                console.log("Fetching YAML files...");
+                const response = await ApiService.getPresets(); // Correct API call
+                
+                if (response && Array.isArray(response)) { 
+                    console.log("YAML Files received:", response); // Debugging log
+                    setYamlFiles(response); // Ensure it's an array
+                } else {
+                    console.warn("Unexpected response format:", response);
+                    setYamlFiles([]); // Set empty array to prevent errors
+                }
             } catch (error) {
                 console.error("Error fetching YAML files:", error);
+                setYamlFiles([]); // Set empty array on error to avoid crashes
             }
         };
-        fetchAnalystDetails();
+    
+        fetchYamlFiles();
     }, []);
-
+    
 
     // Effect to reset chat when "New Chat" is clicked
     useEffect(() => {
@@ -165,28 +174,35 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
                         </Box>
 
-                        {yamlFiles.map((file, index) => (
-                    <MenuItem
-                        key={index}
-                        onClick={() => handleModelSelect(file)}
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "start",
-                            backgroundColor: selectedModel === file ? "#f1f1f1" : "transparent",
-                            "&:hover": { backgroundColor: "#f1f1f1" },
-                        }}
-                    >
-                        <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                            <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
-                                {file}
-                            </Typography>
-                            {selectedModel === file && (
-                                <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
-                            )}
-                        </Box>
-                    </MenuItem>
-                ))}
+                        {yamlFiles.length > 0 ? (
+    yamlFiles.map((file, index) => (
+        <MenuItem
+            key={index}
+            onClick={() => handleModelSelect(file)}
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                backgroundColor: selectedModel === file ? "#f1f1f1" : "transparent",
+                "&:hover": { backgroundColor: "#f1f1f1" },
+            }}
+        >
+            <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
+                    {file}
+                </Typography>
+                {selectedModel === file && (
+                    <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
+                )}
+            </Box>
+        </MenuItem>
+    ))
+) : (
+    <MenuItem disabled>
+        <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
+    </MenuItem>
+)}
+
                     </Menu>
                 </Box>
 

@@ -138,8 +138,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             "prompt": inputValue, // User input
             "env": "preprod",
             "region_name": "us-east-1",
-            "CORTEX_SEARCH_SERVICES": selectedSearchModels,
-            "SEMANTIC_MODELS": selectedYamlModels,
+            "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
+            "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
         };
 
         try {

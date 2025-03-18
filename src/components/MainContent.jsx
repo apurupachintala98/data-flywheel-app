@@ -402,7 +402,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     //     src={logo} style={{ width: '100px' }} // Update this with the correct image path
                     // />
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                        Data at Your Fingertips
+                        Data @ Your Fingertips..!!
                     </Typography>
                 )}
 

@@ -71,7 +71,7 @@ const MessageWithFeedback = ({ message }) => {
                 setDisplayedText((prev) => prev + (message.text[i] || ""));
                 i++;
                 if (i >= message.text.length) clearInterval(interval);
-            }, 5000); // Adjust speed of text appearing
+            }, 30); // Adjust speed of text appearing
             return () => clearInterval(interval);
         }
     }, [message]);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Typography, TextField, Menu, MenuItem, Avatar, Divider, ListItemIcon } from '@mui/material';
+import { Box, IconButton, Typography, TextField, Menu, MenuItem, Avatar, Divider, ListItemIcon, Checkbox } from '@mui/material';
 import { FaArrowUp, FaAngleDown, FaUserCircle } from 'react-icons/fa'; // Icons
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -23,6 +23,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [isMultiSelect, setIsMultiSelect] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
+    const [searchFiles, setSearchFiles] = useState([]); // State to store API data
+
 
     useEffect(() => {
         const fetchYamlFiles = async () => {
@@ -46,7 +48,23 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         fetchYamlFiles();
     }, []);
 
+    useEffect(() => {
+        const fetchSearchFiles = async () => {
+            try {
+                const response = await ApiService.getCortexSearchDetails(); // Correct API call
 
+                if (response && Array.isArray(response)) {
+                    setSearchFiles(response); // Ensure it's an array
+                } else {
+                    setSearchFiles([]); // Set empty array to prevent errors
+                }
+            } catch (error) {
+                setSearchFiles([]); // Set empty array on error to avoid crashes
+            }
+        };
+
+        fetchSearchFiles();
+    }, []);
     // Effect to reset chat when "New Chat" is clicked
     useEffect(() => {
         if (resetChat) {
@@ -213,6 +231,82 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                         ) : (
                             <MenuItem disabled>
                                 <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
+                            </MenuItem>
+                        )}
+
+                    </Menu>
+                </Box>
+
+                <Box>
+
+                    <Typography
+                        onClick={handleChatMenuClick}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        sx={{
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            color: '#5d5d5d',
+                            backgroundColor: chatAnchorEl || isHovered ? "#f1f1f1" : "transparent",
+                            padding: "8px 12px",
+                            borderRadius: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            transition: "background-color 0.2s ease-in-out"
+                        }}
+                    >
+                        {selectedModel}
+                        <FaAngleDown sx={{ fontSize: '18px', color: "#5d5d5d" }} />
+                    </Typography>
+
+                    <Menu
+                        anchorEl={chatAnchorEl}
+                        open={Boolean(chatAnchorEl)}
+                        onClose={handleMenuClose}
+                        PaperProps={{
+                            sx: {
+                                width: 280,
+                                borderRadius: '12px',
+                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                                fontSize: "0.875rem"
+                            },
+                        }}
+                    >
+                        {/* Header Section */}
+                        <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
+                                Search
+                            </Typography>
+                            <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
+                        </Box>
+                        {searchFiles.length > 0 ? (
+                            searchFiles.map((file, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={() => handleModelSelect(file)}
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        backgroundColor: selectedModels.includes(file) ? "#f1f1f1" : "transparent",
+                                        "&:hover": { backgroundColor: "#f1f1f1" },
+                                    }}
+                                >
+                                    <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
+                                        {file}
+                                    </Typography>
+                                    {isMultiSelect ? (
+                                        <Checkbox checked={selectedModels.includes(file)} />
+                                    ) : (
+                                        selectedModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
+                                    )}
+                                </MenuItem>
+                            ))
+                        ) : (
+                            <MenuItem disabled>
+                                <Typography sx={{ color: "#aaa" }}>No Search files available</Typography>
                             </MenuItem>
                         )}
 

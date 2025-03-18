@@ -213,7 +213,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 transition: "background-color 0.2s ease-in-out"
                             }}
                         >
-                            Semantic model
+                            Semantic Model
                             <FaAngleDown style={{ fontSize: '18px', color: "#5d5d5d" }} />
                         </Typography>
 
@@ -402,7 +402,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     //     src={logo} style={{ width: '100px' }} // Update this with the correct image path
                     // />
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                        What can I help with?
+                        Data at Your Fingertips
                     </Typography>
                 )}
 

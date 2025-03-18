@@ -5,10 +5,9 @@ import logo from '../assets/Logo.jpg';
 
 const Sidebar = ({ collapsed, toggleSidebar, onNewChat }) => {
     const prompts = [
-        'I want to schedule an ARB meeting.',
-        'What is the status of my ARB review?',
-        'Guide me on the TGOV process?',
-        'Guide me on Snowflake Onboarding process?',
+        'what is the worst measure for h0544?',
+        'Which measure for contract H0544 has shown the greatest increase from prior year to current year?',
+        'What is Hedis?',
     ];
 
     if (collapsed) return null;

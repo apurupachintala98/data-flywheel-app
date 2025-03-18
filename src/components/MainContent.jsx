@@ -86,6 +86,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const handleMenuClose = () => {
         setAnchorEl(null);
         setChatAnchorEl(null);
+        setSearchAnchorEl(null);
     };
 
     const handleSearchMenuClick = (event) => {
@@ -191,7 +192,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     width: 280,
                                     borderRadius: '12px',
                                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    width: "300px"
                                 },
                             }}
                         >
@@ -264,7 +266,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     width: 280,
                                     borderRadius: '12px',
                                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    width: "300px"
                                 },
                             }}
                         >

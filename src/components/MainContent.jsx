@@ -20,7 +20,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [chatAnchorEl, setChatAnchorEl] = useState(null);
     const [selectedModel, setSelectedModel] = useState("Semantic model");
     const [selectedModels, setSelectedModels] = useState([]); // Store selected files
-    const [isMultiSelect, setIsMultiSelect] = useState(true); 
+    const [isMultiSelect, setIsMultiSelect] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
 
@@ -29,8 +29,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             try {
                 console.log("Fetching YAML files...");
                 const response = await ApiService.getCortexAnalystDetails(); // Correct API call
-                
-                if (response && Array.isArray(response)) { 
+
+                if (response && Array.isArray(response)) {
                     console.log("YAML Files received:", response); // Debugging log
                     setYamlFiles(response); // Ensure it's an array
                 } else {
@@ -42,10 +42,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 setYamlFiles([]); // Set empty array on error to avoid crashes
             }
         };
-    
+
         fetchYamlFiles();
     }, []);
-    
+
 
     // Effect to reset chat when "New Chat" is clicked
     useEffect(() => {
@@ -73,10 +73,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setChatAnchorEl(null);
     };
 
-    const handleModelSelect = (model) => {
-        setSelectedModel(model);
-        handleMenuClose();
-    };
+    // const handleModelSelect = (model) => {
+    //     setSelectedModel(model);
+    //     handleMenuClose();
+    // };
 
     const handleSubmit = () => {
         if (inputValue.trim()) {
@@ -91,6 +91,18 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 const assistantMessage = { text: "I'm doing great, thanks for asking! How about you?", fromUser: false };
                 setMessages((prevMessages) => [...prevMessages, assistantMessage]); // Add assistant message after user message
             }, 1000);
+        }
+    };
+
+    const handleModelSelect = (file) => {
+        if (isMultiSelect) {
+            // Multi-Select Mode: Toggle selection
+            setSelectedModels((prev) =>
+                prev.includes(file) ? prev.filter((item) => item !== file) : [...prev, file]
+            );
+        } else {
+            // Single-Select Mode: Only one can be selected
+            setSelectedModels([file]);
         }
     };
 
@@ -175,35 +187,34 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             </Typography>
                             <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
                         </Box>
-
                         {yamlFiles.length > 0 ? (
-    yamlFiles.map((file, index) => (
-        <MenuItem
-            key={index}
-            onClick={() => handleModelSelect(file)}
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "start",
-                backgroundColor: selectedModel === file ? "#f1f1f1" : "transparent",
-                "&:hover": { backgroundColor: "#f1f1f1" },
-            }}
-        >
-            <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
-                    {file}
-                </Typography>
-                {selectedModel === file && (
-                    <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
-                )}
-            </Box>
-        </MenuItem>
-    ))
-) : (
-    <MenuItem disabled>
-        <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
-    </MenuItem>
-)}
+                            yamlFiles.map((file, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={() => handleModelSelect(file)}
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        backgroundColor: selectedModels.includes(file) ? "#f1f1f1" : "transparent",
+                                        "&:hover": { backgroundColor: "#f1f1f1" },
+                                    }}
+                                >
+                                    <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
+                                        {file}
+                                    </Typography>
+                                    {isMultiSelect ? (
+                                        <Checkbox checked={selectedModels.includes(file)} />
+                                    ) : (
+                                        selectedModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
+                                    )}
+                                </MenuItem>
+                            ))
+                        ) : (
+                            <MenuItem disabled>
+                                <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
+                            </MenuItem>
+                        )}
 
                     </Menu>
                 </Box>
@@ -253,7 +264,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     </Menu>
                 </Box>
             </Box>
-           
+
             <Box sx={{
                 textAlign: 'center',
                 marginTop: '50px',
@@ -266,9 +277,9 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     //  <><img
                     //     src={logo} style={{ width: '100px' }} // Update this with the correct image path
                     // />
-                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                            What can I help with?
-                        </Typography>
+                    <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
+                        What can I help with?
+                    </Typography>
                 )}
 
                 {messages.map((message, index) => (

@@ -82,7 +82,7 @@ const MessageWithFeedback = ({ message }) => {
     }
 
     return (
-        <div className="mb-4">
+        <div className="mb-4 text-left">
             <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol" }}>
                 {displayedText}
             </div>

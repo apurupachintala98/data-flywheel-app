@@ -242,7 +242,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 fontSize: '14px',
                                 fontWeight: 'bold',
                                 color: '#5d5d5d',
-                                backgroundColor: searchAnchorEl || setIsSearchHovered ? "#f1f1f1" : "transparent",
+                                backgroundColor: searchAnchorEl || isSearchHovered ? "#f1f1f1" : "transparent",
                                 padding: "8px 12px",
                                 borderRadius: "8px",
                                 display: "flex",

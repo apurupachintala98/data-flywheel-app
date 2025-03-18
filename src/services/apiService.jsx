@@ -22,7 +22,7 @@ const ApiService = {
         }
     },
 
-    getPresets: async () => {
+    getCortexAnalystDetails: async () => {
         try {
             const response = await axiosInstance.get('/api/cortex/get_cortex_analyst_details/');
             return response.data;

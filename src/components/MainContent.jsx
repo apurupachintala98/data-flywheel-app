@@ -8,7 +8,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MessageWithFeedback from './Feedback';
-import apiService from "../services/apiService";
+import ApiService from '../services/apiService';
 import logo from '../assets/Logo.jpg';
 
 
@@ -26,7 +26,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         // Fetch YAML file names from API
         const fetchAnalystDetails = async () => {
             try {
-                const response = await apiService.getCortexAnalystDetails;
+                const response = await ApiService.getCortexAnalystDetails();
                 setYamlFiles(response.data); // Set the YAML file names in state
             } catch (error) {
                 console.error("Error fetching YAML files:", error);

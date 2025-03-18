@@ -83,7 +83,7 @@ const MessageWithFeedback = ({ message }) => {
 
     return (
         <div className="mb-4">
-            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol" }}>
+            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
                 {displayedText}
             </div>
             {!message.fromUser && <Feedback message={message} />}

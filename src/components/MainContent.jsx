@@ -417,7 +417,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             key={index}
                             sx={{
                                 display: 'flex',
-                                flexDirection: message.fromUser ? 'row-reverse' : 'row',
+                                justifyContent: message.fromUser ? "flex-end" : "flex-start",
+                                // flexDirection: message.fromUser ? 'row-reverse' : 'row',
                                 alignItems: 'center',
                                 marginBottom: '10px',
                             }}

@@ -19,11 +19,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [chatAnchorEl, setChatAnchorEl] = useState(null);
     const [searchAnchorEl, setSearchAnchorEl] = useState(null);
-    const [selectedModel, setSelectedModel] = useState("Semantic model");
     const [selectedYamlModels, setSelectedYamlModels] = useState([]); // Store selected files
     const [selectedSearchModels, setSelectedSearchModels] = useState([]);
-    const [isMultiSelect, setIsMultiSelect] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
+    const [isSearchHovered, setIsSearchHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
     const [searchFiles, setSearchFiles] = useState([]); // State to store API data
 
@@ -105,11 +104,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         );
     };
 
-    // const handleModelSelect = (model) => {
-    //     setSelectedModel(model);
-    //     handleMenuClose();
-    // };
-
     const handleSubmit = () => {
         if (inputValue.trim()) {
             const userMessage = { text: inputValue, fromUser: true };
@@ -163,159 +157,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                         </svg>
                     </IconButton>
                 )}
-                {/* <Box>
 
-                    <Typography
-                        onClick={handleChatMenuClick}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                        sx={{
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 'bold',
-                            color: '#5d5d5d',
-                            backgroundColor: chatAnchorEl || isHovered ? "#f1f1f1" : "transparent",
-                            padding: "8px 12px",
-                            borderRadius: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            transition: "background-color 0.2s ease-in-out"
-                        }}
-                    >
-                        {selectedModel}
-                        <FaAngleDown sx={{ fontSize: '18px', color: "#5d5d5d" }} />
-                    </Typography>
-
-                    <Menu
-                        anchorEl={chatAnchorEl}
-                        open={Boolean(chatAnchorEl)}
-                        onClose={handleMenuClose}
-                        PaperProps={{
-                            sx: {
-                                width: 280,
-                                borderRadius: '12px',
-                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                                fontSize: "0.875rem"
-                            },
-                        }}
-                    >
-                       
-                        <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
-                                Yaml
-                            </Typography>
-                            <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
-                        </Box>
-                        {yamlFiles.length > 0 ? (
-                            yamlFiles.map((file, index) => (
-                                <MenuItem
-                                    key={index}
-                                    onClick={() => handleModelSelect(file)}
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        backgroundColor: selectedModels.includes(file) ? "#f1f1f1" : "transparent",
-                                        "&:hover": { backgroundColor: "#f1f1f1" },
-                                    }}
-                                >
-                                    <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
-                                        {file}
-                                    </Typography>
-                                    {isMultiSelect ? (
-                                        <Checkbox checked={selectedModels.includes(file)} />
-                                    ) : (
-                                        selectedModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
-                                    )}
-                                </MenuItem>
-                            ))
-                        ) : (
-                            <MenuItem disabled>
-                                <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
-                            </MenuItem>
-                        )}
-
-                    </Menu>
-                </Box>
-
-                <Box>
-
-                    <Typography
-                        onClick={handleChatMenuClick}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                        sx={{
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 'bold',
-                            color: '#5d5d5d',
-                            backgroundColor: chatAnchorEl || isHovered ? "#f1f1f1" : "transparent",
-                            padding: "8px 12px",
-                            borderRadius: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            transition: "background-color 0.2s ease-in-out"
-                        }}
-                    >
-                        {selectedModel}
-                        <FaAngleDown sx={{ fontSize: '18px', color: "#5d5d5d" }} />
-                    </Typography>
-
-                    <Menu
-                        anchorEl={chatAnchorEl}
-                        open={Boolean(chatAnchorEl)}
-                        onClose={handleMenuClose}
-                        PaperProps={{
-                            sx: {
-                                width: 280,
-                                borderRadius: '12px',
-                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                                fontSize: "0.875rem"
-                            },
-                        }}
-                    >
-                        <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
-                                Search
-                            </Typography>
-                            <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
-                        </Box>
-                        {searchFiles.length > 0 ? (
-                            searchFiles.map((file, index) => (
-                                <MenuItem
-                                    key={index}
-                                    onClick={() => handleModelSelect(file)}
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        backgroundColor: selectedModels.includes(file) ? "#f1f1f1" : "transparent",
-                                        "&:hover": { backgroundColor: "#f1f1f1" },
-                                    }}
-                                >
-                                    <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
-                                        {file}
-                                    </Typography>
-                                    {isMultiSelect ? (
-                                        <Checkbox checked={selectedModels.includes(file)} />
-                                    ) : (
-                                        selectedModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />
-                                    )}
-                                </MenuItem>
-                            ))
-                        ) : (
-                            <MenuItem disabled>
-                                <Typography sx={{ color: "#aaa" }}>No Search files available</Typography>
-                            </MenuItem>
-                        )}
-
-                    </Menu>
-                </Box> */}
-
-                <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}> {/* Align dropdowns side by side */}
-                    {/* ✅ YAML Dropdown */}
+                <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}>
                     <Box>
                         <Typography
                             onClick={handleChatMenuClick}
@@ -335,7 +178,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 transition: "background-color 0.2s ease-in-out"
                             }}
                         >
-                            {selectedYamlModels.length > 0 ? selectedYamlModels.join(", ") : "Select YAML Model(s)"}
+                            Semantic model
                             <FaAngleDown style={{ fontSize: '18px', color: "#5d5d5d" }} />
                         </Typography>
 
@@ -371,6 +214,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                             alignItems: "center",
                                             backgroundColor: selectedYamlModels.includes(file) ? "#f1f1f1" : "transparent",
                                             "&:hover": { backgroundColor: "#f1f1f1" },
+                                            whiteSpace: "normal",
+                                            wordWrap: "break-word",
                                         }}
                                     >
                                         <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
@@ -390,14 +235,14 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     <Box>
                         <Typography
                             onClick={handleSearchMenuClick}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
+                            onMouseEnter={() => setIsSearchHovered(true)}
+                            onMouseLeave={() => setIsSearchHovered(false)}
                             sx={{
                                 cursor: 'pointer',
                                 fontSize: '14px',
                                 fontWeight: 'bold',
                                 color: '#5d5d5d',
-                                backgroundColor: searchAnchorEl || isHovered ? "#f1f1f1" : "transparent",
+                                backgroundColor: searchAnchorEl || setIsSearchHovered ? "#f1f1f1" : "transparent",
                                 padding: "8px 12px",
                                 borderRadius: "8px",
                                 display: "flex",
@@ -406,7 +251,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 transition: "background-color 0.2s ease-in-out"
                             }}
                         >
-                            {selectedSearchModels.length > 0 ? selectedSearchModels.join(", ") : "Select Search Model(s)"}
+                            Search
                             <FaAngleDown style={{ fontSize: '18px', color: "#5d5d5d" }} />
                         </Typography>
 
@@ -442,6 +287,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                             alignItems: "center",
                                             backgroundColor: selectedSearchModels.includes(file) ? "#f1f1f1" : "transparent",
                                             "&:hover": { backgroundColor: "#f1f1f1" },
+                                            whiteSpace: "normal",
+                                            wordWrap: "break-word",
                                         }}
                                     >
                                         <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>

@@ -30,14 +30,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     useEffect(() => {
         const fetchYamlFiles = async () => {
             try {
-                console.log("Fetching YAML files...");
-                const response = await ApiService.getCortexAnalystDetails(); // Correct API call
-
+                const response = await ApiService.getCortexAnalystDetails(); // 
                 if (response && Array.isArray(response)) {
-                    console.log("YAML Files received:", response); // Debugging log
                     setYamlFiles(response); // Ensure it's an array
                 } else {
-                    console.warn("Unexpected response format:", response);
                     setYamlFiles([]); // Set empty array to prevent errors
                 }
             } catch (error) {
@@ -79,6 +75,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setChatAnchorEl(event.currentTarget);
     };
 
+    const handleSearchMenuClick = (event) => {
+        setSearchAnchorEl(event.currentTarget);
+    };
+
     const handleMenuClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -89,9 +89,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setSearchAnchorEl(null);
     };
 
-    const handleSearchMenuClick = (event) => {
-        setSearchAnchorEl(event.currentTarget);
-    };
 
     const handleYamlModelSelect = (file) => {
         setSelectedYamlModels((prev) =>
@@ -105,19 +102,57 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         );
     };
 
-    const handleSubmit = () => {
-        if (inputValue.trim()) {
-            const userMessage = { text: inputValue, fromUser: true };
+    // const handleSubmit = () => {
+    //     if (inputValue.trim()) {
+    //         const userMessage = { text: inputValue, fromUser: true };
 
-            setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message first
-            setInputValue(''); // Clear input field
-            setSubmitted(true);
+    //         setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message first
+    //         setInputValue(''); // Clear input field
+    //         setSubmitted(true);
 
-            // Simulate assistant's response after a short delay
-            setTimeout(() => {
-                const assistantMessage = { text: "I'm doing great, thanks for asking! How about you?", fromUser: false };
-                setMessages((prevMessages) => [...prevMessages, assistantMessage]); // Add assistant message after user message
-            }, 1000);
+    //         // Simulate assistant's response after a short delay
+    //         setTimeout(() => {
+    //             const assistantMessage = { text: "I'm doing great, thanks for asking! How about you?", fromUser: false };
+    //             setMessages((prevMessages) => [...prevMessages, assistantMessage]); // Add assistant message after user message
+    //         }, 1000);
+    //     }
+    // };
+
+    const handleSubmit = async () => {
+        if (!inputValue.trim()) return; // Prevent empty submissions
+
+        const userMessage = { text: inputValue, fromUser: true };
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
+        setInputValue('');
+        setSubmitted(true);
+
+        const payload = {
+            "aplctn_cd": "aedldocai",
+            "app_id": "aedldocai",
+            "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+            "method": "cortex",
+            "user_id": "abc",
+            "request_id": "12345",
+            "model": "llama3.1-70b-elevance",
+            "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+            "prompt": inputValue, // User input
+            "env": "preprod",
+            "region_name": "us-east-1",
+            "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
+            "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
+        };
+
+        try {
+            const response = await ApiService.sendTextToSQL(payload);
+            console.log("API Response:", response);
+
+            const assistantMessage = { text: response?.result || "No response received.", fromUser: false };
+            setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+
+        } catch (error) {
+            console.error("Error fetching API response:", error);
+            const errorMessage = { text: "An error occurred while fetching data.", fromUser: false };
+            setMessages((prevMessages) => [...prevMessages, errorMessage]);
         }
     };
 
@@ -372,8 +407,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     </Typography>
                 )}
 
-                {messages.map((message, index) => (
-                    <Box sx={{
+            {messages.map((message, index) => (                   
+                 <Box sx={{
                         width: '100%',
                         maxWidth: '100%',
                         margin: '10px auto 0',

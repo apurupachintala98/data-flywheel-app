@@ -32,6 +32,16 @@ const ApiService = {
         }
     },
 
+    sendTextToSQL: async (payload) => {
+        try {
+            const response = await axiosInstance.post('/api/cortex/text2sql/', payload);
+            return response.data;
+        } catch (error) {
+            console.error('Error processing text-to-SQL request:', error);
+            throw error;
+        }
+    },
+
 };
 
 export default ApiService;

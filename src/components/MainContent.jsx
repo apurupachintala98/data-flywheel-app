@@ -19,7 +19,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [chatAnchorEl, setChatAnchorEl] = useState(null);
     const [selectedModel, setSelectedModel] = useState("Semantic model");
-    const [selectedModels, setSelectedModels] = useState([]); // Store selected files
+    const [selectedYamlModels, setSelectedYamlModels] = useState([]); // Store selected files
+    const [selectedSearchModels, setSelectedSearchModels] = useState([]);
     const [isMultiSelect, setIsMultiSelect] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
@@ -51,20 +52,16 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     useEffect(() => {
         const fetchSearchFiles = async () => {
             try {
-                const response = await ApiService.getCortexSearchDetails(); // Correct API call
-
-                if (response && Array.isArray(response)) {
-                    setSearchFiles(response); // Ensure it's an array
-                } else {
-                    setSearchFiles([]); // Set empty array to prevent errors
-                }
+                const response = await ApiService.getCortexSearchDetails();
+                setSearchFiles(response || []);
             } catch (error) {
-                setSearchFiles([]); // Set empty array on error to avoid crashes
+                console.error("Error fetching Search files:", error);
+                setSearchFiles([]);
             }
         };
-
         fetchSearchFiles();
     }, []);
+
     // Effect to reset chat when "New Chat" is clicked
     useEffect(() => {
         if (resetChat) {
@@ -89,6 +86,18 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const handleMenuClose = () => {
         setAnchorEl(null);
         setChatAnchorEl(null);
+    };
+
+    const handleYamlModelSelect = (file) => {
+        setSelectedYamlModels((prev) =>
+            prev.includes(file) ? prev.filter((item) => item !== file) : [...prev, file]
+        );
+    };
+
+    const handleSearchModelSelect = (file) => {
+        setSelectedSearchModels((prev) =>
+            prev.includes(file) ? prev.filter((item) => item !== file) : [...prev, file]
+        );
     };
 
     // const handleModelSelect = (model) => {
@@ -161,7 +170,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                         </svg>
                     </IconButton>
                 )}
-                <Box>
+                {/* <Box>
 
                     <Typography
                         onClick={handleChatMenuClick}
@@ -198,7 +207,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             },
                         }}
                     >
-                        {/* Header Section */}
+                       
                         <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
                                 Yaml
@@ -274,7 +283,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             },
                         }}
                     >
-                        {/* Header Section */}
                         <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
                                 Search
@@ -311,6 +319,152 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                         )}
 
                     </Menu>
+                </Box> */}
+
+                <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}> {/* Align dropdowns side by side */}
+                    {/* ✅ YAML Dropdown */}
+                    <Box>
+                        <Typography
+                            onClick={handleChatMenuClick}
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                            sx={{
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                color: '#5d5d5d',
+                                backgroundColor: chatAnchorEl || isHovered ? "#f1f1f1" : "transparent",
+                                padding: "8px 12px",
+                                borderRadius: "8px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                transition: "background-color 0.2s ease-in-out"
+                            }}
+                        >
+                            {selectedYamlModels.length > 0 ? selectedYamlModels.join(", ") : "Select YAML Model(s)"}
+                            <FaAngleDown style={{ fontSize: '18px', color: "#5d5d5d" }} />
+                        </Typography>
+
+                        <Menu
+                            anchorEl={chatAnchorEl}
+                            open={Boolean(chatAnchorEl)}
+                            onClose={handleMenuClose}
+                            PaperProps={{
+                                sx: {
+                                    width: 280,
+                                    borderRadius: '12px',
+                                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                                    fontSize: "0.875rem"
+                                },
+                            }}
+                        >
+                            {/* Header Section */}
+                            <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
+                                    YAML Models
+                                </Typography>
+                                <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
+                            </Box>
+
+                            {yamlFiles.length > 0 ? (
+                                yamlFiles.map((file, index) => (
+                                    <MenuItem
+                                        key={index}
+                                        onClick={() => handleYamlModelSelect(file)}
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            backgroundColor: selectedYamlModels.includes(file) ? "#f1f1f1" : "transparent",
+                                            "&:hover": { backgroundColor: "#f1f1f1" },
+                                        }}
+                                    >
+                                        <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
+                                            {file}
+                                        </Typography>
+                                        {selectedYamlModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem disabled>
+                                    <Typography sx={{ color: "#aaa" }}>No YAML files available</Typography>
+                                </MenuItem>
+                            )}
+                        </Menu>
+                    </Box>
+
+                    {/* ✅ Search Dropdown */}
+                    <Box>
+                        <Typography
+                            onClick={handleSearchMenuClick}
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                            sx={{
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                color: '#5d5d5d',
+                                backgroundColor: searchAnchorEl || isHovered ? "#f1f1f1" : "transparent",
+                                padding: "8px 12px",
+                                borderRadius: "8px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                transition: "background-color 0.2s ease-in-out"
+                            }}
+                        >
+                            {selectedSearchModels.length > 0 ? selectedSearchModels.join(", ") : "Select Search Model(s)"}
+                            <FaAngleDown style={{ fontSize: '18px', color: "#5d5d5d" }} />
+                        </Typography>
+
+                        <Menu
+                            anchorEl={searchAnchorEl}
+                            open={Boolean(searchAnchorEl)}
+                            onClose={handleMenuClose}
+                            PaperProps={{
+                                sx: {
+                                    width: 280,
+                                    borderRadius: '12px',
+                                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                                    fontSize: "0.875rem"
+                                },
+                            }}
+                        >
+                            {/* Header Section */}
+                            <Box sx={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: "#5d5d5d" }}>
+                                    Search Models
+                                </Typography>
+                                <InfoOutlinedIcon sx={{ fontSize: '16px', color: "#5d5d5d" }} />
+                            </Box>
+
+                            {searchFiles.length > 0 ? (
+                                searchFiles.map((file, index) => (
+                                    <MenuItem
+                                        key={index}
+                                        onClick={() => handleSearchModelSelect(file)}
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            backgroundColor: selectedSearchModels.includes(file) ? "#f1f1f1" : "transparent",
+                                            "&:hover": { backgroundColor: "#f1f1f1" },
+                                        }}
+                                    >
+                                        <Typography sx={{ fontWeight: "bold", color: "#5d5d5d" }}>
+                                            {file}
+                                        </Typography>
+                                        {selectedSearchModels.includes(file) && <CheckCircleIcon sx={{ fontSize: "16px", color: "#5d5d5d" }} />}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem disabled>
+                                    <Typography sx={{ color: "#aaa" }}>No Search files available</Typography>
+                                </MenuItem>
+                            )}
+                        </Menu>
+                    </Box>
                 </Box>
 
                 {/* Right Side - Share Button & Account */}

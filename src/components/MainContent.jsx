@@ -193,7 +193,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     borderRadius: '12px',
                                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
                                     fontSize: "0.875rem",
-                                    width: "300px"
+                                    width: "350px"
                                 },
                             }}
                         >
@@ -267,7 +267,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     borderRadius: '12px',
                                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
                                     fontSize: "0.875rem",
-                                    width: "300px"
+                                    width: "400px"
                                 },
                             }}
                         >

@@ -18,6 +18,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [messages, setMessages] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [chatAnchorEl, setChatAnchorEl] = useState(null);
+    const [searchAnchorEl, setSearchAnchorEl] = useState(null);
     const [selectedModel, setSelectedModel] = useState("Semantic model");
     const [selectedYamlModels, setSelectedYamlModels] = useState([]); // Store selected files
     const [selectedSearchModels, setSelectedSearchModels] = useState([]);
@@ -88,6 +89,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setChatAnchorEl(null);
     };
 
+    const handleSearchMenuClick = (event) => {
+        setSearchAnchorEl(event.currentTarget);
+    };
+
     const handleYamlModelSelect = (file) => {
         setSelectedYamlModels((prev) =>
             prev.includes(file) ? prev.filter((item) => item !== file) : [...prev, file]
@@ -118,18 +123,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 const assistantMessage = { text: "I'm doing great, thanks for asking! How about you?", fromUser: false };
                 setMessages((prevMessages) => [...prevMessages, assistantMessage]); // Add assistant message after user message
             }, 1000);
-        }
-    };
-
-    const handleModelSelect = (file) => {
-        if (isMultiSelect) {
-            // Multi-Select Mode: Toggle selection
-            setSelectedModels((prev) =>
-                prev.includes(file) ? prev.filter((item) => item !== file) : [...prev, file]
-            );
-        } else {
-            // Single-Select Mode: Only one can be selected
-            setSelectedModels([file]);
         }
     };
 
@@ -394,7 +387,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                         </Menu>
                     </Box>
 
-                    {/* ✅ Search Dropdown */}
                     <Box>
                         <Typography
                             onClick={handleSearchMenuClick}

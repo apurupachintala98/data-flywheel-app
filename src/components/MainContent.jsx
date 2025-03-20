@@ -12,7 +12,7 @@ import ApiService from '../services/apiService';
 import logo from '../assets/Logo.jpg';
 
 
-const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
+const MainContent = ({ collapsed, toggleSidebar, resetChat, addChatSession }) => {
     const [inputValue, setInputValue] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -149,7 +149,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
          // Also save this as a new session in chat history
-    setChatSessions((prevSessions) => {
+         addChatSession((prevSessions) => {
         return [{ text: inputValue, timestamp }, ...prevSessions];
     });
 
@@ -198,7 +198,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     timestamp: new Date().toISOString(),
                 };
 
-                setChatSessions((prevSessions) => {
+                addChatSession((prevSessions) => {
                     return [{ text: inputValue, aiResponse: aiMessage.text, timestamp }, ...prevSessions];
                 });
                 }

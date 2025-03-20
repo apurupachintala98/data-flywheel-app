@@ -148,10 +148,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setInputValue('');
         setSubmitted(true);
     
-        // Simulate placeholder for assistant response
-        const assistantMessage = { text: "Thinking...", fromUser: false, streaming: true };
-        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
-    
         try {
             // const payload = {
             //     "aplctn_cd": "aedldocai",
@@ -184,7 +180,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                
             };
 
-            const response = await fetch(apiUrl, {
+            const response = await fetch("http://10.126.192.122:8340/api/cortex/complete", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -193,17 +189,13 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             if (!response.ok) throw new Error("Failed to initiate SSE");
     
             // Start SSE for response streaming
-            const eventSource = new EventSource(apiUrl);
+            const eventSource = new EventSource("http://10.126.192.122:8340/api/cortex/complete");
     
             eventSource.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data.replace("data: ", "").trim());
     
-                    setMessages((prevMessages) => {
-                        const updatedMessages = [...prevMessages];
-                        updatedMessages[updatedMessages.length - 1] = { text: data.message, fromUser: false }; // Update last message
-                        return updatedMessages;
-                    });
+                    setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); 
     
                 } catch (error) {
                     console.error("Error parsing SSE message:", error);

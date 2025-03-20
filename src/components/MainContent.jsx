@@ -532,7 +532,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     <Box
                         sx={{
                             display: 'flex',
-                            justifyContent: 'flex-start',
+                            flexDirection: 'column',
                             alignItems: 'center',
                             backgroundColor: '#fff',
                             padding: '12px 20px',

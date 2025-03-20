@@ -229,10 +229,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
 
     const handleSubmit = () => {
-        if (!inputValue.trim()) return; // Prevent empty submissions
-    
-        // Add user message to chat
-        const userMessage = { text: inputValue, fromUser: true };
+        if (!inputValue.trim()) return; 
+            const userMessage = { text: inputValue, fromUser: true };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
     
         setInputValue('');
@@ -567,7 +565,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     //     src={logo} style={{ width: '100px' }} // Update this with the correct image path
                     // />
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                        Data @ Your Fingertips..!!
+                        Ask you Data Anything
                     </Typography>
                 )}
 
@@ -669,6 +667,32 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 },
                             }}
                         />
+
+<Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
+        <Button 
+            variant="outlined" 
+            sx={{ 
+                borderRadius: "50px", 
+                textTransform: "none", 
+                fontSize: "14px", 
+                padding: "6px 12px" 
+            }}
+        >
+            🔍 Search
+        </Button>
+
+        <Button 
+            variant="outlined" 
+            sx={{ 
+                borderRadius: "50px", 
+                textTransform: "none", 
+                fontSize: "14px", 
+                padding: "6px 12px" 
+            }}
+        >
+            🚀 Deep Research
+        </Button>
+    </Box>
                         <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
                             <FaArrowUp color="#fff" />
                         </IconButton>

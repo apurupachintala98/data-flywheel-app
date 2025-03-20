@@ -155,69 +155,141 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     };
     
 
+    // const handleSubmit = () => {
+    //     if (!inputValue.trim()) return; // Prevent empty submissions
+    
+    //     const userMessage = { text: inputValue, fromUser: true };
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+    //     setInputValue('');
+    //     setSubmitted(true);
+    //     setAggregatedResponse(''); 
+    //     // Convert payload to query parameters
+    //     // const queryString = new URLSearchParams(payload).toString();
+    //     const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
+    
+    //     // Start SSE immediately
+    //     const eventSource = new EventSource(apiUrl);
+
+    //     eventSource.onopen = () => {
+    //         console.log("SSE Connection Opened");
+    //     };
+    
+    
+    //     eventSource.onmessage = (event) => {
+    //         try {
+    //             const data = JSON.parse(event.data);
+    // console.log(data);
+                
+    //     if (data.choices && data.choices.length > 0) {
+    //         const content = data.choices[0]?.delta?.content || "";
+    //         console.log(content);
+    //         if (content) {
+    //             setMessages((prevMessages) => {
+    //                 const lastMessage = prevMessages[prevMessages.length - 1];
+
+    //                 if (lastMessage && !lastMessage.fromUser) {
+    //                     // If last message is from AI, update it
+    //                     return prevMessages.slice(0, -1).concat({
+    //                         text: lastMessage.text + content,
+    //                         fromUser: false
+    //                     });
+    //                 } else {
+    //                     // If this is the first AI response, create a new message
+    //                     return [...prevMessages, { text: content, fromUser: false }];
+    //                 }
+    //             });
+
+    //         }
+    //     }
+    //         } catch (error) {
+    //             console.error("Error parsing SSE message:", error);
+    //             eventSource.close();
+    //         }
+    //     };
+    
+    //     eventSource.onerror = () => {
+    //         console.error("SSE Error: Closing connection");
+    //         eventSource.close();
+    //     };
+    
+    //     return () => {
+    //         eventSource.close(); // Cleanup when component unmounts
+    //     };
+    // };
+    
+    
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
+        // Add user message to chat
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
+    
         setInputValue('');
         setSubmitted(true);
-        setAggregatedResponse(''); 
-        // Convert payload to query parameters
-        // const queryString = new URLSearchParams(payload).toString();
+        setAggregatedResponse('');
+    
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
-        // Start SSE immediately
         const eventSource = new EventSource(apiUrl);
-
-        eventSource.onopen = () => {
-            console.log("SSE Connection Opened");
-        };
+        let typingTimeout;
     
+        eventSource.onopen = () => {
+            console.log(" SSE Connection Opened");
+        };
     
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-    console.log(data);
-                
-        if (data.choices && data.choices.length > 0) {
-            const content = data.choices[0]?.delta?.content || "";
-            console.log(content);
-            if (content) {
-                setMessages((prevMessages) => {
-                    const lastMessage = prevMessages[prevMessages.length - 1];
-
-                    if (lastMessage && !lastMessage.fromUser) {
-                        // If last message is from AI, update it
-                        return prevMessages.slice(0, -1).concat({
-                            text: lastMessage.text + content,
-                            fromUser: false
+                console.log("API Response:", data);
+    
+                if (data.choices && data.choices.length > 0) {
+                    const content = data.choices[0]?.delta?.content || "";
+                    console.log(" Received Content:", content);
+    
+                    if (content) {
+                        setMessages((prevMessages) => {
+                            const lastMessage = prevMessages[prevMessages.length - 1];
+    
+                            if (lastMessage && !lastMessage.fromUser) {
+                                const updatedText = lastMessage.text + content;
+                                
+                                clearTimeout(typingTimeout);
+                                typingTimeout = setTimeout(() => {
+                                    setMessages((prev) => 
+                                        prev.slice(0, -1).concat({ text: updatedText, fromUser: false })
+                                    );
+                                }, 50); 
+    
+                                return prevMessages;
+                            } else {
+                                return [...prevMessages, { text: content, fromUser: false }];
+                            }
                         });
-                    } else {
-                        // If this is the first AI response, create a new message
-                        return [...prevMessages, { text: content, fromUser: false }];
                     }
-                });
-
-                typeTextEffect(content);
-            }
-        }
+                }
+    
+                if (data.choices[0]?.finish_reason === "stop") {
+                    console.log(" AI Response Complete");
+                    eventSource.close();
+                }
+    
             } catch (error) {
-                console.error("Error parsing SSE message:", error);
+                console.error(" Error parsing SSE message:", error);
                 eventSource.close();
             }
         };
     
-        eventSource.onerror = () => {
-            console.error("SSE Error: Closing connection");
+        eventSource.onerror = (event) => {
+            console.error(" SSE Error:", event);
             eventSource.close();
         };
     
         return () => {
-            eventSource.close(); // Cleanup when component unmounts
+            console.log(" Closing SSE Connection");
+            eventSource.close();
         };
     };
-    
     
     return (
         <Box

@@ -159,7 +159,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
             "prompt": inputValue,
             "limit_convs": 0,
-           "app_lvl_prefix": "app_lvl_prefix"
+           "app_lvl_prefix": null
            
         };
     

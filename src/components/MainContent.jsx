@@ -179,7 +179,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-    
+    console.log(data);
                 
         if (data.choices && data.choices.length > 0) {
             const content = data.choices[0]?.delta?.content || "";

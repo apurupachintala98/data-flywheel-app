@@ -112,7 +112,7 @@ const Feedback = ({ message }) => {
     );
 };
 
-const MessageWithFeedback = ({ message, setMessage, apiUrl}) => {
+const MessageWithFeedback = ({ message}) => {
     // const [displayedText, setDisplayedText] = useState("");
     // const indexRef = useRef(0);
 
@@ -138,28 +138,6 @@ const MessageWithFeedback = ({ message, setMessage, apiUrl}) => {
     //     console.error("Message is undefined or invalid", message);
     //     return null;
     // }
-
-    useEffect(() => {
-        const eventSource = new EventSource(apiUrl);
-
-        eventSource.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data.replace("data: ", "").trim());
-                setMessage(data); // Set the received message directly
-            } catch (error) {
-                console.error("Error parsing SSE message:", error);
-            }
-        };
-
-        eventSource.onerror = () => {
-            console.error("SSE Error: Closing connection");
-            eventSource.close();
-        };
-
-        return () => {
-            eventSource.close(); // Cleanup when component unmounts
-        };
-    }, [apiUrl]);
 
     if (!message?.text) {
         return null;

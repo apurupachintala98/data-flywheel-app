@@ -25,7 +25,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [isSearchHovered, setIsSearchHovered] = useState(false);
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
     const [searchFiles, setSearchFiles] = useState([]); // State to store API data
-
+    const apiUrl = "http://10.126.192.122:8340/api/cortex/complete";
 
     useEffect(() => {
         const fetchYamlFiles = async () => {
@@ -102,59 +102,130 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         );
     };
 
-    // const handleSubmit = () => {
-    //     if (inputValue.trim()) {
-    //         const userMessage = { text: inputValue, fromUser: true };
+    // const handleSubmit = async () => {
+    //     if (!inputValue.trim()) return; // Prevent empty submissions
 
-    //         setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message first
-    //         setInputValue(''); // Clear input field
-    //         setSubmitted(true);
+    //     const userMessage = { text: inputValue, fromUser: true };
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    //     setInputValue('');
+    //     setSubmitted(true);
 
-    //         // Simulate assistant's response after a short delay
-    //         setTimeout(() => {
-    //             const assistantMessage = { text: "I'm doing great, thanks for asking! How about you?", fromUser: false };
-    //             setMessages((prevMessages) => [...prevMessages, assistantMessage]); // Add assistant message after user message
-    //         }, 1000);
+    //     const payload = {
+    //         "aplctn_cd": "aedldocai",
+    //         "app_id": "aedldocai",
+    //         "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+    //         "method": "cortex",
+    //         "user_id": "abc",
+    //         "request_id": "12345",
+    //         "model": "llama3.1-70b-elevance",
+    //         "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+    //         "prompt": inputValue, // User input
+    //         "env": "preprod",
+    //         "region_name": "us-east-1",
+    //         "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
+    //         "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
+    //     };
+
+    //     try {
+    //         const response = await ApiService.sendTextToSQL(payload);
+    //         const modelResponse = response?.modelreply?.response || "No valid response received.";
+    //         const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
+    //         setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+
+    //     } catch (error) {
+    //         console.error("Error fetching API response:", error);
+    //         const errorMessage = { text: "An error occurred while fetching data.", fromUser: false };
+    //         setMessages((prevMessages) => [...prevMessages, errorMessage]);
     //     }
     // };
 
+
     const handleSubmit = async () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
-
+    
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
+        setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
         setSubmitted(true);
-
-        const payload = {
-            "aplctn_cd": "aedldocai",
-            "app_id": "aedldocai",
-            "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
-            "method": "cortex",
-            "user_id": "abc",
-            "request_id": "12345",
-            "model": "llama3.1-70b-elevance",
-            "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
-            "prompt": inputValue, // User input
-            "env": "preprod",
-            "region_name": "us-east-1",
-            "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
-            "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
-        };
-
+    
+        // Simulate placeholder for assistant response
+        const assistantMessage = { text: "Thinking...", fromUser: false, streaming: true };
+        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+    
         try {
-            const response = await ApiService.sendTextToSQL(payload);
-            const modelResponse = response?.modelreply?.response || "No valid response received.";
-            const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
-            setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+            // const payload = {
+            //     "aplctn_cd": "aedldocai",
+            //     "app_id": "aedldocai",
+            //     "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+            //     "method": "cortex",
+            //     "user_id": "abc",
+            //     "request_id": "12345",
+            //     "model": "llama3.1-70b-elevance",
+            //     "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+            //     "prompt": inputValue,
+            //     "env": "preprod",
+            //     "region_name": "us-east-1",
+            //     "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
+            //     "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
+            // };
+    
+            const payload = {
+                "aplctn_cd": "aedldocai",
+                "app_id": "aedldocai",
+                "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+                "method": "cortex",
+                "user_id": "abc",
+                "session_id": "12345",
+                "model": "llama3.1-70b-elevance",
+                "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+                "prompt": inputValue,
+                "limit_convs": 0,
+               "app_lvl_prefix": "app_lvl_prefix"
+               
+            };
 
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+    
+            if (!response.ok) throw new Error("Failed to initiate SSE");
+    
+            // Start SSE for response streaming
+            const eventSource = new EventSource(apiUrl);
+    
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data.replace("data: ", "").trim());
+    
+                    setMessages((prevMessages) => {
+                        const updatedMessages = [...prevMessages];
+                        updatedMessages[updatedMessages.length - 1] = { text: data.message, fromUser: false }; // Update last message
+                        return updatedMessages;
+                    });
+    
+                } catch (error) {
+                    console.error("Error parsing SSE message:", error);
+                }
+            };
+    
+            eventSource.onerror = () => {
+                console.error("SSE Error: Closing connection");
+                eventSource.close();
+            };
+    
+            return () => {
+                eventSource.close(); // Cleanup when component unmounts
+            };
+    
         } catch (error) {
             console.error("Error fetching API response:", error);
-            const errorMessage = { text: "An error occurred while fetching data.", fromUser: false };
-            setMessages((prevMessages) => [...prevMessages, errorMessage]);
+            setMessages((prevMessages) => [...prevMessages, { text: "Error fetching response", fromUser: false }]);
         }
     };
 
+    
     return (
         <Box
             sx={{
@@ -436,7 +507,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     <Typography variant="body1">{message.text}</Typography>
                                 </Box>
                             ) : (
-                                <MessageWithFeedback message={message} setMessage={setMessages} apiUrl="http://10.126.192.122:8340/api/cortex/complete/" />
+                                <MessageWithFeedback message={message} />
                             )}
                         </Box>
                     </Box>

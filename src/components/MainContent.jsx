@@ -142,23 +142,19 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     //     }
     // };
 
-    useEffect(() => {
-        if (aggregatedResponse) {
-            let i = 0;
-            setDisplayedText(''); // Reset before typing starts
+    const startTypingEffect = (fullText) => {
+        setDisplayedText(''); // Reset displayed text before typing starts
+        let i = 0;
     
-            const typingInterval = setInterval(() => {
-                if (i < aggregatedResponse.length) {
-                    setDisplayedText((prev) => prev + aggregatedResponse.charAt(i)); // Append characters
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
-                }
-            }, typingSpeed);
-    
-            return () => clearInterval(typingInterval);
-        }
-    }, [aggregatedResponse]); // Runs when new text arrives
+        const typingInterval = setInterval(() => {
+            if (i < fullText.length) {
+                setDisplayedText((prev) => prev + fullText.charAt(i)); // Append characters one by one
+                i++;
+            } else {
+                clearInterval(typingInterval);
+            }
+        }, typingSpeed);
+    };
     
     
 
@@ -185,15 +181,20 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         eventSource.onmessage = (event) => {
             try {
-                let newChunk = event.data.trim(); // Get the raw SSE data (plain text)
+                let newChunk = event.data.trim(); // Get raw text from SSE response
                 
                 if (newChunk) {
-                    setAggregatedResponse((prev) => prev + newChunk); // Store the full concatenated response
-                                    }
+                    setAggregatedResponse((prev) => {
+                        const updatedResponse = prev + newChunk; // Concatenate new chunk
+                        startTypingEffect(updatedResponse); // Start typing effect on UI
+                        return updatedResponse; // Store full accumulated response
+                    });
+                }
             } catch (error) {
                 console.error("Error processing SSE message:", error);
             }
         };
+        
         
     
         eventSource.onerror = () => {

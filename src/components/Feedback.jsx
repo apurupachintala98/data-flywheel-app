@@ -112,7 +112,7 @@ const Feedback = ({ message }) => {
     );
 };
 
-const MessageWithFeedback = ({ message }) => {
+const MessageWithFeedback = ({ message, setMessage, apiUrl}) => {
     // const [displayedText, setDisplayedText] = useState("");
     // const indexRef = useRef(0);
 
@@ -168,7 +168,7 @@ const MessageWithFeedback = ({ message }) => {
     return (
         <div className="mb-4">
             <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
-                {displayedText}
+                {message.text}
             </div>
             {!message.fromUser && <Feedback message={message} />}
         </div>

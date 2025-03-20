@@ -436,7 +436,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     <Typography variant="body1">{message.text}</Typography>
                                 </Box>
                             ) : (
-                                <MessageWithFeedback message={message} apiUrl="http://10.126.192.122:8340/api/cortex/complete/" />
+                                <MessageWithFeedback message={message} setMessage={setMessages} apiUrl="http://10.126.192.122:8340/api/cortex/complete/" />
                             )}
                         </Box>
                     </Box>

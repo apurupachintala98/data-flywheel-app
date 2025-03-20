@@ -140,41 +140,37 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     // };
 
     const handleSubmit = () => {
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim()) return; // Prevent empty submissions
     
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
+        setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
         setSubmitted(true);
     
-        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=${encodeURIComponent(inputValue)}&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
+        // Convert payload to query parameters
+        // const queryString = new URLSearchParams(payload).toString();
+        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
+        // Start SSE immediately
         const eventSource = new EventSource(apiUrl);
     
         eventSource.onmessage = (event) => {
             try {
-                console.log("SSE Message Received:", event.data); // Debugging
-    
                 const data = JSON.parse(event.data);
-                setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]);
-    
+                console.log(data);
+                setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); // Display API response
             } catch (error) {
-                console.error("Error parsing SSE message:", error, "Raw Data:", event.data);
+                console.error("Error parsing SSE message:", error);
             }
         };
     
         eventSource.onerror = () => {
             console.error("SSE Error: Closing connection");
             eventSource.close();
-    
-            setTimeout(() => {
-                console.log("Reconnecting SSE...");
-                handleSubmit();
-            }, 3000);
         };
     
         return () => {
-            eventSource.close();
+            eventSource.close(); // Cleanup when component unmounts
         };
     };
     

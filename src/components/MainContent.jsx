@@ -144,16 +144,17 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
     const typeTextEffect = (newText) => {
         let i = 0;
-        
+    
         const typingInterval = setInterval(() => {
             if (i < newText.length) {
-                setDisplayedText((prev) => prev + newText.charAt(i));
+                setDisplayedText((prev) => prev + newText.charAt(i)); // Append characters one by one
                 i++;
             } else {
                 clearInterval(typingInterval);
             }
-        }, typingSpeed);
+        }, typingSpeed); // Adjust speed for natural effect
     };
+    
 
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
@@ -177,22 +178,19 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         eventSource.onmessage = (event) => {
             try {
-                const data = JSON.parse(event.data);
-    
-                if (data.choices && data.choices.length > 0) {
-                    const content = data.choices[0]?.delta?.content || ""; // Get content safely
-    
-                    if (content) {
-                        setAggregatedResponse((prev) => prev + content); // Append new content
-                        
-                        // Call function to update UI with typing effect
-                        typeTextEffect(content);
-                    }
+                let newChunk = event.data.trim(); // Get the raw SSE data (plain text)
+                
+                if (newChunk) {
+                    setAggregatedResponse((prev) => prev + newChunk); // Store the full concatenated response
+                    
+                    // Display the new content in a smooth typewriter effect
+                    typeTextEffect(newChunk);
                 }
             } catch (error) {
-                console.error("Error parsing SSE message:", error);
+                console.error("Error processing SSE message:", error);
             }
         };
+        
     
         eventSource.onerror = () => {
             console.error("SSE Error: Closing connection");

@@ -26,6 +26,9 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const [yamlFiles, setYamlFiles] = useState([]); // State to store API data
     const [searchFiles, setSearchFiles] = useState([]); // State to store API data
     const apiUrl = "http://10.126.192.122:8340/api/cortex/complete";
+    const [aggregatedResponse, setAggregatedResponse] = useState('');
+    const [displayedText, setDisplayedText] = useState('');
+    const typingSpeed = 30; 
 
     useEffect(() => {
         const fetchYamlFiles = async () => {
@@ -139,6 +142,19 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     //     }
     // };
 
+    const typeTextEffect = (newText) => {
+        let i = 0;
+        
+        const typingInterval = setInterval(() => {
+            if (i < newText.length) {
+                setDisplayedText((prev) => prev + newText.charAt(i));
+                i++;
+            } else {
+                clearInterval(typingInterval);
+            }
+        }, typingSpeed);
+    };
+
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
@@ -146,7 +162,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
         setSubmitted(true);
-    
+        setAggregatedResponse(''); 
         // Convert payload to query parameters
         // const queryString = new URLSearchParams(payload).toString();
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
@@ -162,8 +178,17 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                console.log(data);
-                setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); // Display API response
+    
+                if (data.choices && data.choices.length > 0) {
+                    const content = data.choices[0]?.delta?.content || ""; // Get content safely
+    
+                    if (content) {
+                        setAggregatedResponse((prev) => prev + content); // Append new content
+                        
+                        // Call function to update UI with typing effect
+                        typeTextEffect(content);
+                    }
+                }
             } catch (error) {
                 console.error("Error parsing SSE message:", error);
             }
@@ -461,7 +486,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                     <Typography variant="body1">{message.text}</Typography>
                                 </Box>
                             ) : (
-                                <MessageWithFeedback message={message} />
+                                // <MessageWithFeedback message={message} />
+                                (index === messages.length - 1 ? displayedText : msg.text)
                             )}
                         </Box>
                     </Box>

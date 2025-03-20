@@ -6,52 +6,65 @@ const Feedback = ({ message }) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const synthRef = useRef(window.speechSynthesis);
     const utteranceRef = useRef(null);
+    const voicesRef = useRef([]);
+
+    useEffect(() => {
+        const loadVoices = () => {
+            voicesRef.current = synthRef.current.getVoices();
+        };
+
+        loadVoices();
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }, []);
+
+
     const handleSpeak = () => {
         if (!message || !message.text) {
             console.error("Message is undefined or empty");
             return;
         }
 
-        if ("speechSynthesis" in window) {
-            const synth = synthRef.current;
+        const synth = synthRef.current;
 
-            // Stop existing speech if already speaking
-            if (synth.speaking) {
-                synth.cancel();
-                setIsSpeaking(false);
-                return;
-            }
-
-            // Create new utterance
-            const utterance = new SpeechSynthesisUtterance(message.text);
-            utterance.rate = 0.9;  // Slightly slower for clarity
-            utterance.pitch = 1.2; // More natural tone
-            utterance.volume = 1.0; // Max volume for better clarity
-
-            // Select the best available voice
-            const voices = synth.getVoices();
-            utterance.voice = voices.find(voice => 
-                voice.name.includes("Google UK English Female") || 
-                voice.name.includes("Google US English Female")
-            ) || voices[0];  // Default to first available if no match
-
-            // Ensure clean, uninterrupted speech
+        // Stop existing speech if already speaking
+        if (synth.speaking) {
             synth.cancel();
-            synth.speak(utterance);
-            setIsSpeaking(true);
-
-            // Track completion
-            utterance.onend = () => setIsSpeaking(false);
-            utterance.onerror = (err) => {
-                console.error("Speech Synthesis Error:", err);
-                setIsSpeaking(false);
-            };
-
-            utteranceRef.current = utterance;
-        } else {
-            alert("Speech synthesis is not supported in this browser.");
+            setIsSpeaking(false);
+            return;
         }
+
+        // Create a new speech instance
+        const utterance = new SpeechSynthesisUtterance(message.text);
+        utterance.rate = 0.85;  // Slightly slower for smoothness
+        utterance.pitch = 1.0;  // Natural tone
+        utterance.volume = 1.0;  // Max volume for clarity
+
+        // Select the best voice available
+        utterance.voice = voicesRef.current.find(voice =>
+            voice.name.includes("Google UK English Female") || 
+            voice.name.includes("Google US English Female")
+        ) || voicesRef.current[0];  // Default to the first available voice
+
+        // Prevent stuttering by restarting synthesis if needed
+        utterance.onstart = () => {
+            setIsSpeaking(true);
+        };
+
+        utterance.onend = () => {
+            setIsSpeaking(false);
+        };
+
+        utterance.onerror = (err) => {
+            console.error("Speech Synthesis Error:", err);
+            setIsSpeaking(false);
+        };
+
+        // Play the text
+        synth.cancel(); // Ensure a clean start
+        synth.speak(utterance);
+        utteranceRef.current = utterance;
     };
+
 
     const handleCopy = async () => {
         if (!message || !message.text) {

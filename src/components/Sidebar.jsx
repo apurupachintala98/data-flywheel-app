@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, IconButton, Link, Typography, Divider, Tooltip } from '@mui/material';
 import { FaComments, FaSearch, FaPen, FaSun, FaUser, FaInfoCircle, FaSignOutAlt, FaTrashAlt, FaAngleLeft, FaAngleRight, FaBell, } from 'react-icons/fa'; // Icons
 import logo from '../assets/Logo.jpg';

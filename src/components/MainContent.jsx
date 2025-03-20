@@ -684,7 +684,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             fontSize: "14px",
             padding: "6px 12px",
             color: "#5d5d5d",
-            borderColor: "#5d5d5d",  
+            borderColor: "#5d5d5d", 
+            fontSize:'13.3px' 
         }}
     >
         Semantic Model
@@ -703,6 +704,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             padding: "6px 12px",
             color: "#5d5d5d",
             borderColor: "#5d5d5d",
+            fontSize:'13.3px'
         }}
     >
         Search Service
@@ -721,6 +723,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             padding: "6px 12px",
             color: "#5d5d5d",
             borderColor: "#5d5d5d",
+            fontSize:'13.3px'
         }}
     >
         Upload your Data

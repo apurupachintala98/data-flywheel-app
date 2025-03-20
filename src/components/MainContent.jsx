@@ -600,10 +600,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 </Box>
                             ) : (
                                 <MessageWithFeedback message={message} />
-                                // (index === messages.length - 1 ? displayedText : message.text)
-                    //             <Typography variant="body1">
-                    //   {message.text}
-                    // </Typography>
+                                
                             )}
                         </Box>
                     </Box>
@@ -678,7 +675,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 padding: "6px 12px" 
             }}
         >
-            🔍 Search
+           Semantic Model 
         </Button>
 
         <Button 
@@ -690,7 +687,19 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 padding: "6px 12px" 
             }}
         >
-            🚀 Deep Research
+            Search Service
+        </Button>
+
+        <Button 
+            variant="outlined" 
+            sx={{ 
+                borderRadius: "50px", 
+                textTransform: "none", 
+                fontSize: "14px", 
+                padding: "6px 12px" 
+            }}
+        >
+            Upload your Data 
         </Button>
     </Box>
                         <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>

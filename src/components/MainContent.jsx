@@ -28,7 +28,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     const apiUrl = "http://10.126.192.122:8340/api/cortex/complete";
     const [aggregatedResponse, setAggregatedResponse] = useState('');
     const [displayedText, setDisplayedText] = useState('');
-    const typingSpeed = 30; 
+    const typingSpeed = 60; 
 
     useEffect(() => {
         const fetchYamlFiles = async () => {

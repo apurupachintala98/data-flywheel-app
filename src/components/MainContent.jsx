@@ -180,16 +180,14 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             try {
                 const data = JSON.parse(event.data);
     
-                if (data.choices && data.choices.length > 0) {
-                    const content = data.choices[0]?.delta?.content || ""; // Get content safely
-    
-                    if (content) {
-                        setAggregatedResponse((prev) => prev + content); // Append new content
-                        
-                        // Call function to update UI with typing effect
-                        typeTextEffect(content);
-                    }
-                }
+                
+        if (data.choices && data.choices.length > 0) {
+            const content = data.choices[0]?.delta?.content || "";
+            if (content) {
+                setAggregatedResponse((prev) => prev + content);
+                typeTextEffect(content);
+            }
+        }
             } catch (error) {
                 console.error("Error parsing SSE message:", error);
             }

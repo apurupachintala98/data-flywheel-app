@@ -142,18 +142,24 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     //     }
     // };
 
-    const typeTextEffect = (newText) => {
-        let i = 0;
+    useEffect(() => {
+        if (aggregatedResponse) {
+            let i = 0;
+            setDisplayedText(''); // Reset before typing starts
     
-        const typingInterval = setInterval(() => {
-            if (i < newText.length) {
-                setDisplayedText((prev) => prev + newText.charAt(i)); // Append characters one by one
-                i++;
-            } else {
-                clearInterval(typingInterval);
-            }
-        }, typingSpeed); // Adjust speed for natural effect
-    };
+            const typingInterval = setInterval(() => {
+                if (i < aggregatedResponse.length) {
+                    setDisplayedText((prev) => prev + aggregatedResponse.charAt(i)); // Append characters
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                }
+            }, typingSpeed);
+    
+            return () => clearInterval(typingInterval);
+        }
+    }, [aggregatedResponse]); // Runs when new text arrives
+    
     
 
     const handleSubmit = () => {
@@ -164,6 +170,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setInputValue('');
         setSubmitted(true);
         setAggregatedResponse(''); 
+        setDisplayedText('');
         // Convert payload to query parameters
         // const queryString = new URLSearchParams(payload).toString();
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
@@ -195,6 +202,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         eventSource.onerror = () => {
             console.error("SSE Error: Closing connection");
             eventSource.close();
+
+            setMessages((prevMessages) => [...prevMessages, { text: aggregatedResponse, fromUser: false }]);
         };
     
         return () => {
@@ -471,7 +480,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 marginBottom: '10px',
                             }}
                         >
-                            {message.fromUser ? (
+                            {/* {message.fromUser ? (
                                 <Box
                                     sx={{
                                         padding: '10px',
@@ -486,7 +495,21 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             ) : (
                                 // <MessageWithFeedback message={message} />
                                 (index === messages.length - 1 ? displayedText : message.text)
-                            )}
+                            )} */}
+
+{msg.fromUser ? (
+                                <Box
+                                    sx={{
+                                        padding: '10px',
+                                        backgroundColor: message.fromUser ? 'hsla(0, 0%, 91%, .5)' : 'transparent', // User messages with background
+                                        color: '#000',
+                                        borderRadius: '10px',
+                                        maxWidth: '75%',
+                                    }}
+                                >
+                                    <Typography variant="body1">{message.text}</Typography>
+                                </Box>
+                            ) : (index === messages.length - 1 ? displayedText : message.text)}
                         </Box>
                     </Box>
 

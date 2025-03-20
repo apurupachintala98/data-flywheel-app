@@ -665,7 +665,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             }}
                         />
 
-<Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
+
+                       
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
         <Button 
             variant="outlined" 
             sx={{ 
@@ -701,11 +704,11 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         >
             Upload your Data 
         </Button>
-    </Box>
-                        <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+
+        <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
                             <FaArrowUp color="#fff" />
                         </IconButton>
-                    </Box>
+    </Box>
                 </Box>
             </Box>
         </Box>

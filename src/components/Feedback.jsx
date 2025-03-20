@@ -62,21 +62,27 @@ const Feedback = ({ message }) => {
 
 const MessageWithFeedback = ({ message }) => {
     const [displayedText, setDisplayedText] = useState("");
+    const indexRef = useRef(0);
 
     useEffect(() => {
-        if (message && message.text) {
-            let i = 0;
-            setDisplayedText(""); // Reset text before starting effect
+        if (message?.text) {
+            setDisplayedText(""); // Reset text before animation
+            indexRef.current = 0; // Reset index
+            
             const interval = setInterval(() => {
-                setDisplayedText((prev) => prev + (message.text[i] || ""));
-                i++;
-                if (i >= message.text.length) clearInterval(interval);
-            }, 30); // Adjust speed of text appearing
+                setDisplayedText((prev) => prev + message.text[indexRef.current]);
+                indexRef.current += 1;
+
+                if (indexRef.current >= message.text.length) {
+                    clearInterval(interval);
+                }
+            }, 30);
+
             return () => clearInterval(interval);
         }
     }, [message]);
 
-    if (!message || typeof message !== "object" || !("text" in message)) {
+    if (!message?.text) {
         console.error("Message is undefined or invalid", message);
         return null;
     }

@@ -174,7 +174,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         eventSource.onmessage = (event) => {
             try {
-                let newChunk = event.data.trim(); // Get raw SSE chunk
+                let newChunk = event.trim(); // Get raw SSE chunk
                 console.log("New SSE Chunk:", newChunk);
     
                 if (newChunk) {

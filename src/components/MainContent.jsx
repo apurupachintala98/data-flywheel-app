@@ -139,84 +139,35 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     //     }
     // };
 
-
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
         const userMessage = { text: inputValue, fromUser: true };
         setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
-        setSubmitted(true);
     
-        try {
-            // const payload = {
-            //     "aplctn_cd": "aedldocai",
-            //     "app_id": "aedldocai",
-            //     "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
-            //     "method": "cortex",
-            //     "user_id": "abc",
-            //     "request_id": "12345",
-            //     "model": "llama3.1-70b-elevance",
-            //     "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
-            //     "prompt": inputValue,
-            //     "env": "preprod",
-            //     "region_name": "us-east-1",
-            //     "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
-            //     "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
-            // };
+        // Start SSE immediately
+        const eventSource = new EventSource("http://10.126.192.122:8340/api/cortex/complete");
     
-            const payload = {
-                "aplctn_cd": "aedldocai",
-                "app_id": "aedldocai",
-                "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
-                "method": "cortex",
-                "user_id": "abc",
-                "session_id": "12345",
-                "model": "llama3.1-70b-elevance",
-                "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
-                "prompt": inputValue,
-                "limit_convs": 0,
-               "app_lvl_prefix": "app_lvl_prefix"
-               
-            };
-
-            const response = await fetch("http://10.126.192.122:8340/api/cortex/complete", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data.replace("data: ", "").trim());
+                setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); // Display API response
     
-            if (!response.ok) throw new Error("Failed to initiate SSE");
+            } catch (error) {
+                console.error("Error parsing SSE message:", error);
+            }
+        };
     
-            // Start SSE for response streaming
-            const eventSource = new EventSource("http://10.126.192.122:8340/api/cortex/complete");
+        eventSource.onerror = () => {
+            console.error("SSE Error: Closing connection");
+            eventSource.close();
+        };
     
-            eventSource.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data.replace("data: ", "").trim());
-    
-                    setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); 
-    
-                } catch (error) {
-                    console.error("Error parsing SSE message:", error);
-                }
-            };
-    
-            eventSource.onerror = () => {
-                console.error("SSE Error: Closing connection");
-                eventSource.close();
-            };
-    
-            return () => {
-                eventSource.close(); // Cleanup when component unmounts
-            };
-    
-        } catch (error) {
-            console.error("Error fetching API response:", error);
-            setMessages((prevMessages) => [...prevMessages, { text: "Error fetching response", fromUser: false }]);
-        }
+        return () => {
+            eventSource.close(); // Cleanup when component unmounts
+        };
     };
-
     
     return (
         <Box

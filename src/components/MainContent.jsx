@@ -153,71 +153,81 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             }
         }, typingSpeed); // Adjust speed for natural effect
     };
-    
 
     // const handleSubmit = () => {
     //     if (!inputValue.trim()) return; // Prevent empty submissions
     
+    //     // Add user message to chat
     //     const userMessage = { text: inputValue, fromUser: true };
-    //     setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    
     //     setInputValue('');
     //     setSubmitted(true);
-    //     setAggregatedResponse(''); 
-    //     // Convert payload to query parameters
-    //     // const queryString = new URLSearchParams(payload).toString();
+    //     setAggregatedResponse('');
+    
     //     const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
-    //     // Start SSE immediately
     //     const eventSource = new EventSource(apiUrl);
-
-    //     eventSource.onopen = () => {
-    //         console.log("SSE Connection Opened");
-    //     };
+    //     let typingTimeout;
     
+    //     eventSource.onopen = () => {
+    //         console.log(" SSE Connection Opened");
+    //     };
     
     //     eventSource.onmessage = (event) => {
     //         try {
     //             const data = JSON.parse(event.data);
-    // console.log(data);
-                
-    //     if (data.choices && data.choices.length > 0) {
-    //         const content = data.choices[0]?.delta?.content || "";
-    //         console.log(content);
-    //         if (content) {
-    //             setMessages((prevMessages) => {
-    //                 const lastMessage = prevMessages[prevMessages.length - 1];
-
-    //                 if (lastMessage && !lastMessage.fromUser) {
-    //                     // If last message is from AI, update it
-    //                     return prevMessages.slice(0, -1).concat({
-    //                         text: lastMessage.text + content,
-    //                         fromUser: false
+    //             console.log("API Response:", data);
+    
+    //             if (data.choices && data.choices.length > 0) {
+    //                 const content = data.choices[0]?.delta?.content || "";
+    //                 console.log(" Received Content:", content);
+    
+    //                 if (content) {
+    //                     setMessages((prevMessages) => {
+    //                         const lastMessage = prevMessages[prevMessages.length - 1];
+    
+    //                         if (lastMessage && !lastMessage.fromUser) {
+    //                             const updatedText = lastMessage.text + content;
+                                
+    //                             clearTimeout(typingTimeout);
+    //                             typingTimeout = setTimeout(() => {
+    //                                 setMessages((prev) => 
+    //                                     prev.slice(0, -1).concat({ text: updatedText, fromUser: false })
+    //                                 );
+    //                             }, 50); 
+    
+    //                             return prevMessages;
+    //                         } else {
+    //                             return [...prevMessages, { text: content, fromUser: false }];
+    //                         }
     //                     });
-    //                 } else {
-    //                     // If this is the first AI response, create a new message
-    //                     return [...prevMessages, { text: content, fromUser: false }];
     //                 }
-    //             });
-
-    //         }
-    //     }
+    //             }
+    
+    //             if (data.choices[0]?.finish_reason === "stop") {
+    //                 console.log(" AI Response Complete");
+    //                 eventSource.close();
+    //             }
+    
     //         } catch (error) {
-    //             console.error("Error parsing SSE message:", error);
+    //             console.error(" Error parsing SSE message:", error);
     //             eventSource.close();
     //         }
     //     };
     
-    //     eventSource.onerror = () => {
-    //         console.error("SSE Error: Closing connection");
+    //     eventSource.onerror = (event) => {
+    //         console.error(" SSE Error:", event);
     //         eventSource.close();
     //     };
     
     //     return () => {
-    //         eventSource.close(); // Cleanup when component unmounts
+    //         console.log(" Closing SSE Connection");
+    //         eventSource.close();
     //     };
     // };
     
-    
+
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
@@ -232,10 +242,11 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
         const eventSource = new EventSource(apiUrl);
+        let contentBuffer = "";  // Buffer to store incoming content
         let typingTimeout;
     
         eventSource.onopen = () => {
-            console.log(" SSE Connection Opened");
+            console.log("SSE Connection Opened");
         };
     
         eventSource.onmessage = (event) => {
@@ -244,49 +255,67 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 console.log("API Response:", data);
     
                 if (data.choices && data.choices.length > 0) {
-                    const content = data.choices[0]?.delta?.content || "";
-                    console.log(" Received Content:", content);
+                    const newContent = data.choices[0]?.delta?.content || "";
     
-                    if (content) {
-                        setMessages((prevMessages) => {
-                            const lastMessage = prevMessages[prevMessages.length - 1];
+                    if (newContent) {
+                        contentBuffer += newContent; // Add new content to the buffer
+                        console.log("Updated Buffer:", contentBuffer);
     
-                            if (lastMessage && !lastMessage.fromUser) {
-                                const updatedText = lastMessage.text + content;
-                                
-                                clearTimeout(typingTimeout);
-                                typingTimeout = setTimeout(() => {
-                                    setMessages((prev) => 
-                                        prev.slice(0, -1).concat({ text: updatedText, fromUser: false })
-                                    );
-                                }, 50); 
-    
-                                return prevMessages;
-                            } else {
-                                return [...prevMessages, { text: content, fromUser: false }];
-                            }
-                        });
+                        // Start the typing effect if not already running
+                        if (!typingTimeout) {
+                            typeEffect();
+                        }
                     }
                 }
     
+                // Stop streaming when finish_reason is "stop"
                 if (data.choices[0]?.finish_reason === "stop") {
-                    console.log(" AI Response Complete");
                     eventSource.close();
                 }
     
             } catch (error) {
-                console.error(" Error parsing SSE message:", error);
+                console.error("Error parsing SSE message:", error);
                 eventSource.close();
             }
         };
     
         eventSource.onerror = (event) => {
-            console.error(" SSE Error:", event);
+            console.error("SSE Error:", event);
             eventSource.close();
         };
     
+        // Function to simulate typing effect
+        function typeEffect() {
+            if (contentBuffer.length === 0) {
+                typingTimeout = null;
+                return;
+            }
+    
+            // Extract the first character and update messages
+            const nextChar = contentBuffer.charAt(0);
+            contentBuffer = contentBuffer.slice(1); // Remove the first character
+    
+            setMessages((prevMessages) => {
+                const lastMessage = prevMessages[prevMessages.length - 1];
+    
+                if (lastMessage && !lastMessage.fromUser) {
+                    // Append character to last AI message
+                    return prevMessages.slice(0, -1).concat({
+                        text: lastMessage.text + nextChar,
+                        fromUser: false
+                    });
+                } else {
+                    // Create a new AI message
+                    return [...prevMessages, { text: nextChar, fromUser: false }];
+                }
+            });
+    
+            // Call typeEffect recursively with a small delay for typing effect
+            typingTimeout = setTimeout(typeEffect, 50); // Adjust speed here (50ms per character)
+        }
+    
         return () => {
-            console.log(" Closing SSE Connection");
+            console.log("Closing SSE Connection");
             eventSource.close();
         };
     };

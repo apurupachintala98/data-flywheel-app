@@ -183,7 +183,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     setAggregatedResponse((prev) => {
                         const updatedResponse = prev + newChunk;
                         // startTypingEffect(updatedResponse);
-                        setDisplayedText((prev) => prev + updatedResponse.charAt(i));
+                        // setDisplayedText((prev) => prev + updatedResponse.charAt(i));
                         return updatedResponse; // Store accumulated response
                     });
                 }

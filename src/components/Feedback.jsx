@@ -112,19 +112,19 @@ const Feedback = ({ message }) => {
     );
 };
 
-const MessageWithFeedback = ({ message}) => {
-    if (!message?.text) {
-        return null;
-    }
+// const MessageWithFeedback = ({ message}) => {
+//     if (!message?.text) {
+//         return null;
+//     }
 
-    return (
-        <div className="mb-4">
-            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
-                {message.text}
-            </div>
-            {!message.fromUser && <Feedback message={message} />}
-        </div>
-    );
-};
+//     return (
+//         <div className="mb-4">
+//             <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
+//                 {message.text}
+//             </div>
+//             {!message.fromUser && <Feedback message={message} />}
+//         </div>
+//     );
+// };
 
-export default MessageWithFeedback;
+export default Feedback;

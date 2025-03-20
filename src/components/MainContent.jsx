@@ -486,7 +486,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 </Box>
                             ) : (
                                 // <MessageWithFeedback message={message} />
-                                (index === messages.length - 1 ? displayedText : message.text)
+                                // (index === messages.length - 1 ? displayedText : message.text)
+                                <Typography variant="body1">
+                        {index === messages.length - 1 ? displayedText || message.text : message.text}
+                    </Typography>
                             )}
                         </Box>
                     </Box>

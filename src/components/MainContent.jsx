@@ -163,11 +163,9 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setMessages((prevMessages) => [...prevMessages, userMessage]); // Show user message
         setInputValue('');
         setSubmitted(true);
-        setAggregatedResponse('');
-        setDisplayedText('');
     
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
-
+    
         const eventSource = new EventSource(apiUrl);
     
         eventSource.onopen = () => {
@@ -176,16 +174,11 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         eventSource.onmessage = (event) => {
             try {
-                let newChunk = event.data.trim(); // Get raw text
+                let newChunk = event.data.trim(); // Get raw SSE chunk
                 console.log("New SSE Chunk:", newChunk);
-                let i = 0;
+    
                 if (newChunk) {
-                    setAggregatedResponse((prev) => {
-                        const updatedResponse = prev + newChunk;
-                        // startTypingEffect(updatedResponse);
-                        // setDisplayedText((prev) => prev + updatedResponse.charAt(i));
-                        return updatedResponse; // Store accumulated response
-                    });
+                    setMessages((prevMessages) => [...prevMessages, { text: newChunk, fromUser: false }]); // Display each chunk separately
                 }
             } catch (error) {
                 console.error("Error processing SSE message:", error);
@@ -195,8 +188,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         eventSource.onerror = () => {
             console.error("SSE Error: Closing connection");
             eventSource.close();
-    
-            setMessages((prevMessages) => [...prevMessages, { text: aggregatedResponse, fromUser: false }]);
         };
     
         return () => {
@@ -555,7 +546,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     <Typography variant="body1">{message.text}</Typography>
                 </Box>
             ) : (
-                <MessageWithFeedback message={{ text: index === messages.length - 1 ? displayedText : message.text, fromUser: false }} />
+                <MessageWithFeedback message={{ text: message.text, fromUser: false }} />
             )}
                         </Box>
                     </Box>

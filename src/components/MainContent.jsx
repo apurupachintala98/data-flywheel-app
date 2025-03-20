@@ -230,70 +230,70 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
-    
+
         // Add user message to chat
         const userMessage = { text: inputValue, fromUser: true };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
-    
+
         setInputValue('');
         setSubmitted(true);
         setAggregatedResponse('');
-    
+
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
-    
+
         const eventSource = new EventSource(apiUrl);
         let contentBuffer = "";  // Buffer to store incoming content
         let typingTimeout;
-    
+
         eventSource.onopen = () => {
             console.log("SSE Connection Opened");
         };
-    
+
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 console.log("📩 API Response:", data);
-    
+
                 if (data.choices && data.choices.length > 0) {
                     const newContent = data.choices[0]?.delta?.content || "";
-    
+
                     if (newContent) {
                         contentBuffer += newContent; // Add new content to the buffer
                         console.log("📝 Updated Buffer:", contentBuffer);
-    
+
                         // Start the typing effect if not already running
                         if (!typingTimeout) {
                             typeEffect();
                         }
                     }
                 }
-    
+
                 if (data.choices[0]?.finish_reason === "stop") {
                     eventSource.close();
                 }
-    
+
             } catch (error) {
                 eventSource.close();
             }
         };
-    
+
         eventSource.onerror = (event) => {
             eventSource.close();
         };
-    
+
         // Function to simulate typing effect
         function typeEffect() {
             if (contentBuffer.length === 0) {
                 typingTimeout = null;
                 return;
             }
-    
+
             const nextChar = contentBuffer.charAt(0);
             contentBuffer = contentBuffer.slice(1); // Remove the first character
-    
+
             setMessages((prevMessages) => {
                 const lastMessage = prevMessages[prevMessages.length - 1];
-    
+
                 if (lastMessage && !lastMessage.fromUser) {
                     return prevMessages.slice(0, -1).concat({
                         text: lastMessage.text + nextChar,
@@ -303,15 +303,15 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     return [...prevMessages, { text: nextChar, fromUser: false }];
                 }
             });
-    
+
             typingTimeout = setTimeout(typeEffect, 50);
         }
-    
+
         return () => {
             eventSource.close();
         };
     };
-    
+
 
     return (
         <Box
@@ -504,7 +504,9 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 {/* Right Side - Share Button & Account */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
 
-
+                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                        Welcome, Balaji!
+                    </Typography>
                     {/* Account Dropdown */}
                     <IconButton onClick={handleMenuClick}>
                         <FaUserCircle size={30} />                    </IconButton>
@@ -627,115 +629,115 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
                         }}
                     >
-                         <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                        <TextField
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();  // Prevents new line in input field
-                                    handleSubmit();  // Calls submit function
-                                }
-                            }}
-                            variant="standard"
-                            placeholder="Ask anything"
+                        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                            <TextField
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();  // Prevents new line in input field
+                                        handleSubmit();  // Calls submit function
+                                    }
+                                }}
+                                variant="standard"
+                                placeholder="Ask anything"
+                                sx={{
+                                    flexGrow: 1,
+                                    marginX: "10px",
+                                    "& .MuiInputBase-root": {
+                                        border: "none",
+                                        boxShadow: "none",
+                                    },
+                                    "& .MuiInput-underline:before": {
+                                        borderBottom: "none !important",
+                                    },
+                                    "& .MuiInput-underline:after": {
+                                        borderBottom: "none !important",
+                                    },
+                                    "& .MuiInput-underline": {
+                                        visibility: "visible",
+                                    },
+                                }}
+                            />
+
+
+
+                        </Box>
+                        <Box
                             sx={{
-                                flexGrow: 1,
-                                marginX: "10px",
-                                "& .MuiInputBase-root": {
-                                    border: "none",
-                                    boxShadow: "none",
-                                },
-                                "& .MuiInput-underline:before": {
-                                    borderBottom: "none !important",
-                                },
-                                "& .MuiInput-underline:after": {
-                                    borderBottom: "none !important",
-                                },
-                                "& .MuiInput-underline": {
-                                    visibility: "visible",
-                                },
+                                display: 'flex',
+                                justifyContent: 'space-between',  // Ensures buttons left, submit button right
+                                alignItems: 'center',
+                                width: '100%',
+                                marginTop: '12px'
                             }}
-                        />
+                        >
+                            {/* Buttons Aligned to Left */}
+                            <Box sx={{ display: 'flex', gap: '8px' }}>
+                                <Button
+                                    variant="outlined"
+                                    component="a"
+                                    href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio/analyst"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                        borderRadius: "50px",
+                                        textTransform: "none",
+                                        fontSize: "14px",
+                                        padding: "6px 12px",
+                                        color: "#5d5d5d",
+                                        borderColor: "#5d5d5d",
+                                        fontSize: '13.3px'
+                                    }}
+                                >
+                                    Semantic Model
+                                </Button>
+
+                                <Button
+                                    variant="outlined"
+                                    component="a"
+                                    href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                        borderRadius: "50px",
+                                        textTransform: "none",
+                                        fontSize: "14px",
+                                        padding: "6px 12px",
+                                        color: "#5d5d5d",
+                                        borderColor: "#5d5d5d",
+                                        fontSize: '13.3px'
+                                    }}
+                                >
+                                    Search Service
+                                </Button>
+
+                                <Button
+                                    variant="outlined"
+                                    component="a"
+                                    href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/data/databases/DOC_AI_DB/schemas/DOC_AI_SCHEMA/stage/COC_STAGE"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                        borderRadius: "50px",
+                                        textTransform: "none",
+                                        fontSize: "14px",
+                                        padding: "6px 12px",
+                                        color: "#5d5d5d",
+                                        borderColor: "#5d5d5d",
+                                        fontSize: '13.3px'
+                                    }}
+                                >
+                                    Upload your Data
+                                </Button>
+                            </Box>
 
 
-
-                    </Box>
-                    <Box 
-    sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',  // Ensures buttons left, submit button right
-        alignItems: 'center', 
-        width: '100%', 
-        marginTop: '12px' 
-    }}
->
-    {/* Buttons Aligned to Left */}
-    <Box sx={{ display: 'flex', gap: '8px' }}>
-    <Button
-        variant="outlined"
-        component="a"
-        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio/analyst" 
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-            borderRadius: "50px",
-            textTransform: "none",
-            fontSize: "14px",
-            padding: "6px 12px",
-            color: "#5d5d5d",
-            borderColor: "#5d5d5d", 
-            fontSize:'13.3px' 
-        }}
-    >
-        Semantic Model
-    </Button>
-
-    <Button
-        variant="outlined"
-        component="a"
-        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio"  
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-            borderRadius: "50px",
-            textTransform: "none",
-            fontSize: "14px",
-            padding: "6px 12px",
-            color: "#5d5d5d",
-            borderColor: "#5d5d5d",
-            fontSize:'13.3px'
-        }}
-    >
-        Search Service
-    </Button>
-
-    <Button
-        variant="outlined"
-        component="a"
-        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/data/databases/DOC_AI_DB/schemas/DOC_AI_SCHEMA/stage/COC_STAGE"  
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-            borderRadius: "50px",
-            textTransform: "none",
-            fontSize: "14px",
-            padding: "6px 12px",
-            color: "#5d5d5d",
-            borderColor: "#5d5d5d",
-            fontSize:'13.3px'
-        }}
-    >
-        Upload your Data
-    </Button>
-</Box>
-
-
-    {/* Submit Button Aligned to Right */}
-    <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
-        <FaArrowUp color="#fff" />
-    </IconButton>
-</Box>
+                            {/* Submit Button Aligned to Right */}
+                            <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+                                <FaArrowUp color="#fff" />
+                            </IconButton>
+                        </Box>
 
                     </Box>
                 </Box>

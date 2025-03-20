@@ -178,12 +178,12 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             try {
                 let newChunk = event.data.trim(); // Get raw text
                 console.log("New SSE Chunk:", newChunk);
-    
+                let i = 0;
                 if (newChunk) {
                     setAggregatedResponse((prev) => {
                         const updatedResponse = prev + newChunk;
                         // startTypingEffect(updatedResponse);
-                        setDisplayedText((prev) => prev + fullText.charAt(i));
+                        setDisplayedText((prev) => prev + updatedResponse.charAt(i));
                         return updatedResponse; // Store accumulated response
                     });
                 }

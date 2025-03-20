@@ -153,4 +153,4 @@ const Feedback = ({ message }) => {
 //     );
 // };
 
-export default MessageWithFeedback;
+export default Feedback;

@@ -6,12 +6,6 @@ import { Box } from '@mui/material';
 const Layout = () => {
     const [collapsed, setCollapsed] = useState(false); 
     const [resetChat, setResetChat] = useState(false);
-    const [chatSessions, setChatSessions] = useState([]);
-
-    const addChatSession = (newSession) => {
-        setChatSessions((prevSessions) => [{ text: newSession.text, timestamp: newSession.timestamp }, ...prevSessions]);
-    };
-
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed); 
@@ -25,7 +19,7 @@ const Layout = () => {
     return (
         <Box sx={{ display: 'flex', width: '100%' }}>
             {/* Sidebar */}
-            <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} onNewChat={handleNewChat} chatSessions={chatSessions} />
+            <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} onNewChat={handleNewChat}  />
 
             {/* Main Content - Adjusting margin based on sidebar width */}
             <Box
@@ -35,7 +29,7 @@ const Layout = () => {
                     width: '100%',
                 }}
             >
-                <MainContent collapsed={collapsed} toggleSidebar={toggleSidebar} resetChat={resetChat} addChatSession={addChatSession}  />
+                <MainContent collapsed={collapsed} toggleSidebar={toggleSidebar} resetChat={resetChat} />
             </Box>
         </Box>
     );

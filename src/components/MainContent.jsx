@@ -487,7 +487,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 </Box>
                             ) : (
                                 // <MessageWithFeedback message={message} />
-                                (index === messages.length - 1 ? displayedText : msg.text)
+                                (index === messages.length - 1 ? displayedText : message.text)
                             )}
                         </Box>
                     </Box>

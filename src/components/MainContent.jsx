@@ -591,45 +591,61 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 >
     {/* Buttons Aligned to Left */}
     <Box sx={{ display: 'flex', gap: '8px' }}>
-        <Button
-            variant="outlined"
-            sx={{
-                borderRadius: "50px",
-                textTransform: "none",
-                fontSize: "14px",
-                padding: "6px 12px",
-                color: "#e3e3e3"
-            }}
-        >
-            Semantic Model
-        </Button>
+    <Button
+        variant="outlined"
+        component="a"
+        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio/analyst" 
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+            borderRadius: "50px",
+            textTransform: "none",
+            fontSize: "14px",
+            padding: "6px 12px",
+            color: "#5d5d5d",
+            borderColor: "#5d5d5d",  
+        }}
+    >
+        Semantic Model
+    </Button>
 
-        <Button
-            variant="outlined"
-            sx={{
-                borderRadius: "50px",
-                textTransform: "none",
-                fontSize: "14px",
-                padding: "6px 12px",
-                color: "#e3e3e3"
-            }}
-        >
-            Search Service
-        </Button>
+    <Button
+        variant="outlined"
+        component="a"
+        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/studio"  
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+            borderRadius: "50px",
+            textTransform: "none",
+            fontSize: "14px",
+            padding: "6px 12px",
+            color: "#5d5d5d",
+            borderColor: "#5d5d5d",
+        }}
+    >
+        Search Service
+    </Button>
 
-        <Button
-            variant="outlined"
-            sx={{
-                borderRadius: "50px",
-                textTransform: "none",
-                fontSize: "14px",
-                padding: "6px 12px",
-                color: "#e3e3e3"
-            }}
-        >
-            Upload your Data
-        </Button>
-    </Box>
+    <Button
+        variant="outlined"
+        component="a"
+        href="https://app-carelon-eda_preprod.privatelink.snowflakecomputing.com/carelon/eda_preprod/#/data/databases/DOC_AI_DB/schemas/DOC_AI_SCHEMA/stage/COC_STAGE"  
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+            borderRadius: "50px",
+            textTransform: "none",
+            fontSize: "14px",
+            padding: "6px 12px",
+            color: "#5d5d5d",
+            borderColor: "#5d5d5d",
+        }}
+    >
+        Upload your Data
+    </Button>
+</Box>
+
 
     {/* Submit Button Aligned to Right */}
     <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>

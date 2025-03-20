@@ -181,7 +181,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             console.log("SSE Event Received:", event);
     
             try {
-                let newChunk = event.data; // Get raw SSE chunk
+                let newChunk = event; // Get raw SSE chunk
                 console.log(" New SSE Chunk:", newChunk);
     
                 if (newChunk) {

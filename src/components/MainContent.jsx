@@ -475,9 +475,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             }}>
 
                 {messages.length === 0 && (
-                    //  <><img
-                    //     src={logo} style={{ width: '100px' }} // Update this with the correct image path
-                    // />
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
                         Ask you Data Anything
                     </Typography>
@@ -526,7 +523,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     width: '100%',
-                    marginTop: messages.length === 0 ? '25%' : '40px',  // Add spacing above input field
+                    marginTop: messages.length === 0 ? '30%' : '40px',  // Add spacing above input field
                 }}>
 
                     <Box

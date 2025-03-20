@@ -143,12 +143,12 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     // };
 
     const startTypingEffect = (fullText) => {
-        setDisplayedText(''); // Reset displayed text before typing starts
+        setDisplayedText(''); // Reset before typing
         let i = 0;
     
         const typingInterval = setInterval(() => {
             if (i < fullText.length) {
-                setDisplayedText((prev) => prev + fullText.charAt(i)); // Append characters one by one
+                setDisplayedText((prev) => prev + fullText.charAt(i)); // Append one character
                 i++;
             } else {
                 clearInterval(typingInterval);
@@ -156,51 +156,45 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         }, typingSpeed);
     };
     
-    
-
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+        setMessages((prevMessages) => [...prevMessages, userMessage]); // Show user message
         setInputValue('');
         setSubmitted(true);
-        setAggregatedResponse(''); 
+        setAggregatedResponse('');
         setDisplayedText('');
-        // Convert payload to query parameters
-        // const queryString = new URLSearchParams(payload).toString();
-        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
-        // Start SSE immediately
+        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
+        
         const eventSource = new EventSource(apiUrl);
-
+    
         eventSource.onopen = () => {
             console.log("SSE Connection Opened");
         };
     
-    
         eventSource.onmessage = (event) => {
             try {
-                let newChunk = event.data.trim(); // Get raw text from SSE response
-                
+                let newChunk = event.data.trim(); // Get raw text
+                console.log("New SSE Chunk:", newChunk);
+    
                 if (newChunk) {
                     setAggregatedResponse((prev) => {
-                        const updatedResponse = prev + newChunk; // Concatenate new chunk
-                        startTypingEffect(updatedResponse); // Start typing effect on UI
-                        return updatedResponse; // Store full accumulated response
+                        const updatedResponse = prev + newChunk;
+                        startTypingEffect(updatedResponse);
+                        return updatedResponse; // Store accumulated response
                     });
                 }
             } catch (error) {
                 console.error("Error processing SSE message:", error);
             }
         };
-        
-        
     
         eventSource.onerror = () => {
             console.error("SSE Error: Closing connection");
             eventSource.close();
-
+    
             setMessages((prevMessages) => [...prevMessages, { text: aggregatedResponse, fromUser: false }]);
         };
     
@@ -208,6 +202,59 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             eventSource.close(); // Cleanup when component unmounts
         };
     };
+    
+    
+
+    // const handleSubmit = () => {
+    //     if (!inputValue.trim()) return; // Prevent empty submissions
+    
+    //     const userMessage = { text: inputValue, fromUser: true };
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+    //     setInputValue('');
+    //     setSubmitted(true);
+    //     setAggregatedResponse(''); 
+    //     setDisplayedText('');
+    //     // Convert payload to query parameters
+    //     // const queryString = new URLSearchParams(payload).toString();
+    //     const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
+    
+    //     // Start SSE immediately
+    //     const eventSource = new EventSource(apiUrl);
+
+    //     eventSource.onopen = () => {
+    //         console.log("SSE Connection Opened");
+    //     };
+    
+    
+    //     eventSource.onmessage = (event) => {
+    //         try {
+    //             let newChunk = event.data.trim(); // Get raw text from SSE response
+                
+    //             if (newChunk) {
+    //                 setAggregatedResponse((prev) => {
+    //                     const updatedResponse = prev + newChunk; // Concatenate new chunk
+    //                     startTypingEffect(updatedResponse); // Start typing effect on UI
+    //                     return updatedResponse; // Store full accumulated response
+    //                 });
+    //             }
+    //         } catch (error) {
+    //             console.error("Error processing SSE message:", error);
+    //         }
+    //     };
+        
+        
+    
+    //     eventSource.onerror = () => {
+    //         console.error("SSE Error: Closing connection");
+    //         eventSource.close();
+
+    //         setMessages((prevMessages) => [...prevMessages, { text: aggregatedResponse, fromUser: false }]);
+    //     };
+    
+    //     return () => {
+    //         eventSource.close(); // Cleanup when component unmounts
+    //     };
+    // };
     
     
     return (
@@ -494,20 +541,21 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 // <MessageWithFeedback message={message} />
                                 (index === messages.length - 1 ? displayedText : message.text)
                             )} */}
-
 {message.fromUser ? (
-                                <Box
-                                    sx={{
-                                        padding: '10px',
-                                        backgroundColor: message.fromUser ? 'hsla(0, 0%, 91%, .5)' : 'transparent', // User messages with background
-                                        color: '#000',
-                                        borderRadius: '10px',
-                                        maxWidth: '75%',
-                                    }}
-                                >
-                                    <Typography variant="body1">{message.text}</Typography>
-                                </Box>
-                            ) : (index === messages.length - 1 ? displayedText : message.text)}
+                <Box
+                    sx={{
+                        padding: '10px',
+                        backgroundColor: 'hsla(0, 0%, 91%, .5)',
+                        color: '#000',
+                        borderRadius: '10px',
+                        maxWidth: '75%',
+                    }}
+                >
+                    <Typography variant="body1">{message.text}</Typography>
+                </Box>
+            ) : (
+                <MessageWithFeedback message={{ text: index === messages.length - 1 ? displayedText : message.text, fromUser: false }} />
+            )}
                         </Box>
                     </Box>
 

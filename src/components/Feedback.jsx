@@ -112,45 +112,19 @@ const Feedback = ({ message }) => {
     );
 };
 
-// const MessageWithFeedback = ({ message}) => {
-//     // const [displayedText, setDisplayedText] = useState("");
-//     // const indexRef = useRef(0);
+const MessageWithFeedback = ({ message}) => {
+    if (!message?.text) {
+        return null;
+    }
 
-//     // useEffect(() => {
-//     //     if (message?.text) {
-//     //         setDisplayedText(""); // Reset text before animation
-//     //         indexRef.current = 0; // Reset index
+    return (
+        <div className="mb-4">
+            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
+                {message.text}
+            </div>
+            {!message.fromUser && <Feedback message={message} />}
+        </div>
+    );
+};
 
-//     //         const interval = setInterval(() => {
-//     //             setDisplayedText((prev) => prev + message.text[indexRef.current]);
-//     //             indexRef.current += 1;
-
-//     //             if (indexRef.current >= message.text.length) {
-//     //                 clearInterval(interval);
-//     //             }
-//     //         }, 30);
-
-//     //         return () => clearInterval(interval);
-//     //     }
-//     // }, [message]);
-
-//     // if (!message?.text) {
-//     //     console.error("Message is undefined or invalid", message);
-//     //     return null;
-//     // }
-
-//     if (!message?.text) {
-//         return null;
-//     }
-
-//     return (
-//         <div className="mb-4">
-//             <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
-//                 {message.text}
-//             </div>
-//             {!message.fromUser && <Feedback message={message} />}
-//         </div>
-//     );
-// };
-
-export default Feedback;
+export default MessageWithFeedback;

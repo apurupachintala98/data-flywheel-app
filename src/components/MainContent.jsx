@@ -144,7 +144,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
     const typeTextEffect = (newText) => {
         let i = 0;
-    
         const typingInterval = setInterval(() => {
             if (i < newText.length) {
                 setDisplayedText((prev) => prev + newText.charAt(i)); // Append characters one by one
@@ -183,13 +182,29 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 
         if (data.choices && data.choices.length > 0) {
             const content = data.choices[0]?.delta?.content || "";
+            console.log(content);
             if (content) {
-                setAggregatedResponse((prev) => prev + content);
+                setMessages((prevMessages) => {
+                    const lastMessage = prevMessages[prevMessages.length - 1];
+
+                    if (lastMessage && !lastMessage.fromUser) {
+                        // If last message is from AI, update it
+                        return prevMessages.slice(0, -1).concat({
+                            text: lastMessage.text + content,
+                            fromUser: false
+                        });
+                    } else {
+                        // If this is the first AI response, create a new message
+                        return [...prevMessages, { text: content, fromUser: false }];
+                    }
+                });
+
                 typeTextEffect(content);
             }
         }
             } catch (error) {
                 console.error("Error parsing SSE message:", error);
+                eventSource.close();
             }
         };
     
@@ -488,7 +503,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 // <MessageWithFeedback message={message} />
                                 // (index === messages.length - 1 ? displayedText : message.text)
                                 <Typography variant="body1">
-                      {displayedText}
+                      {message.text}
                     </Typography>
                             )}
                         </Box>

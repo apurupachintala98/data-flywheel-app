@@ -583,47 +583,60 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
 
                     </Box>
-                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                fontSize: "14px",
-                                padding: "6px 12px"
-                            }}
-                        >
-                            Semantic Model
-                        </Button>
+                    <Box 
+    sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between',  // Ensures buttons left, submit button right
+        alignItems: 'center', 
+        width: '100%', 
+        marginTop: '12px' 
+    }}
+>
+    {/* Buttons Aligned to Left */}
+    <Box sx={{ display: 'flex', gap: '8px' }}>
+        <Button
+            variant="outlined"
+            sx={{
+                borderRadius: "50px",
+                textTransform: "none",
+                fontSize: "14px",
+                padding: "6px 12px"
+            }}
+        >
+            Semantic Model
+        </Button>
 
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                fontSize: "14px",
-                                padding: "6px 12px"
-                            }}
-                        >
-                            Search Service
-                        </Button>
+        <Button
+            variant="outlined"
+            sx={{
+                borderRadius: "50px",
+                textTransform: "none",
+                fontSize: "14px",
+                padding: "6px 12px"
+            }}
+        >
+            Search Service
+        </Button>
 
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                fontSize: "14px",
-                                padding: "6px 12px"
-                            }}
-                        >
-                            Upload your Data
-                        </Button>
+        <Button
+            variant="outlined"
+            sx={{
+                borderRadius: "50px",
+                textTransform: "none",
+                fontSize: "14px",
+                padding: "6px 12px"
+            }}
+        >
+            Upload your Data
+        </Button>
+    </Box>
 
-                        <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
-                            <FaArrowUp color="#fff" />
-                        </IconButton>
-                    </Box>
+    {/* Submit Button Aligned to Right */}
+    <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+        <FaArrowUp color="#fff" />
+    </IconButton>
+</Box>
+
                     </Box>
                 </Box>
             </Box>

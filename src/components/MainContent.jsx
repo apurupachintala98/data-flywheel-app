@@ -668,36 +668,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                             }}
                         />
 
-{/* <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
-        <Button 
-            variant="outlined" 
-            sx={{ 
-                borderRadius: "50px", 
-                textTransform: "none", 
-                fontSize: "14px", 
-                padding: "6px 12px" 
-            }}
-        >
-            🔍 Search
-        </Button>
-
-        <Button 
-            variant="outlined" 
-            sx={{ 
-                borderRadius: "50px", 
-                textTransform: "none", 
-                fontSize: "14px", 
-                padding: "6px 12px" 
-            }}
-        >
-            🚀 Deep Research
-        </Button>
-    </Box> */}
-                        <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
-                            <FaArrowUp color="#fff" />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+<Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', marginRight: '10px' }}>
         <Button 
             variant="outlined" 
             sx={{ 
@@ -722,6 +693,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             🚀 Deep Research
         </Button>
     </Box>
+                        <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+                            <FaArrowUp color="#fff" />
+                        </IconButton>
+                    </Box>
                 </Box>
             </Box>
         </Box>

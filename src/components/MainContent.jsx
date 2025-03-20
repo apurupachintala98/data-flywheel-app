@@ -144,8 +144,14 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
     const handleSubmit = () => {
         if (!inputValue.trim()) return;
-        const userMessage = { text: inputValue, fromUser: true };
+        const timestamp = new Date().toISOString();
+        const userMessage = { text: inputValue, fromUser: true, timestamp };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+         // Also save this as a new session in chat history
+    setChatSessions((prevSessions) => {
+        return [{ text: inputValue, timestamp }, ...prevSessions];
+    });
 
         setInputValue('');
         setSubmitted(true);
@@ -156,6 +162,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         const eventSource = new EventSource(apiUrl);
         let contentBuffer = "";  // Buffer to store incoming content
         let typingTimeout;
+        let aiResponseText = ""; 
 
         eventSource.onopen = () => {
             console.log("SSE Connection Opened");
@@ -170,7 +177,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                     const newContent = data.choices[0]?.delta?.content || "";
 
                     if (newContent) {
-                        contentBuffer += newContent; // Add new content to the buffer
+                        contentBuffer += newContent; 
+                        aiResponseText += newContent;  // Add new content to the buffer
                         console.log("Updated Buffer:", contentBuffer);
 
                         // Start the typing effect if not already running
@@ -183,6 +191,16 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 // Stop streaming when finish_reason is "stop"
                 if (data.choices[0]?.finish_reason === "stop") {
                     eventSource.close();
+                     // Store AI response as part of the session history
+                const aiMessage = {
+                    text: aiResponseText,
+                    fromUser: false,
+                    timestamp: new Date().toISOString(),
+                };
+
+                setChatSessions((prevSessions) => {
+                    return [{ text: inputValue, aiResponse: aiMessage.text, timestamp }, ...prevSessions];
+                });
                 }
 
             } catch (error) {
@@ -211,19 +229,15 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 const lastMessage = prevMessages[prevMessages.length - 1];
 
                 if (lastMessage && !lastMessage.fromUser) {
-                    // Append character to last AI message
                     return prevMessages.slice(0, -1).concat({
                         text: lastMessage.text + nextChar,
                         fromUser: false
                     });
                 } else {
-                    // Create a new AI message
                     return [...prevMessages, { text: nextChar, fromUser: false }];
                 }
             });
-
-            // Call typeEffect recursively with a small delay for typing effect
-            typingTimeout = setTimeout(typeEffect, 50); // Adjust speed here (50ms per character)
+            typingTimeout = setTimeout(typeEffect, 50); 
         }
 
         return () => {

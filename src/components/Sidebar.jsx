@@ -3,7 +3,45 @@ import { Box, Button, IconButton, Link, Typography, Divider, Tooltip } from '@mu
 import { FaComments, FaSearch, FaPen, FaSun, FaUser, FaInfoCircle, FaSignOutAlt, FaTrashAlt, FaAngleLeft, FaAngleRight, FaBell, } from 'react-icons/fa'; // Icons
 import logo from '../assets/Logo.jpg';
 
-const Sidebar = ({ collapsed, toggleSidebar, onNewChat }) => {
+const categorizeSessions = (sessions) => {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const todaySessions = [];
+    const yesterdaySessions = [];
+    const previousSessions = [];
+
+    sessions.forEach((session) => {
+        const sessionDate = new Date(session.timestamp);
+        const sessionDay = sessionDate.toDateString();
+        const todayDay = today.toDateString();
+        const yesterdayDay = yesterday.toDateString();
+
+        if (sessionDay === todayDay) {
+            todaySessions.push(session);
+        } else if (sessionDay === yesterdayDay) {
+            yesterdaySessions.push(session);
+        } else {
+            previousSessions.push(session);
+        }
+    });
+
+    return { todaySessions, yesterdaySessions, previousSessions };
+};
+
+const Sidebar = ({ collapsed, toggleSidebar, onNewChat, chatSessions }) => {
+
+    const [groupedSessions, setGroupedSessions] = useState({
+        todaySessions: [],
+        yesterdaySessions: [],
+        previousSessions: [],
+    });
+
+    useEffect(() => {
+        setGroupedSessions(categorizeSessions(chatSessions));
+    }, [chatSessions]);
+
     const prompts = [
         'what is the worst measure for h0544?',
         'Which measure for contract H0544 has shown the greatest increase from prior year to current year?',
@@ -164,6 +202,93 @@ const Sidebar = ({ collapsed, toggleSidebar, onNewChat }) => {
                             </Tooltip>
                         </Box>
                     ))}
+
+<Box
+            // sx={{
+            //     width: "250px",
+            //     backgroundColor: "#f9f9f9",
+            //     padding: "13px",
+            //     boxShadow: "2px 0px 5px rgba(0, 0, 0, 0.1)",
+            //     display: "flex",
+            //     flexDirection: "column",
+            // }}
+        >
+            {/* Section - Chat History */}
+            <Typography variant="caption" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+                Chat History
+            </Typography>
+
+            {/* Today Section */}
+            {groupedSessions.todaySessions.length > 0 && (
+                <>
+                    <Typography variant="caption" sx={{ fontWeight: "bold", color: "#555" }}>
+                        Today
+                    </Typography>
+                    {groupedSessions.todaySessions.map((session, index) => (
+                        <Tooltip key={index} title={session.text} placement="right" arrow>
+                            <Typography
+                                sx={{
+                                    padding: "8px",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    "&:hover": { backgroundColor: "#f0f0f0" },
+                                }}
+                            >
+                                {session.text}
+                            </Typography>
+                        </Tooltip>
+                    ))}
+                    <Divider sx={{ marginY: "10px" }} />
+                </>
+            )}
+
+            {/* Yesterday Section */}
+            {groupedSessions.yesterdaySessions.length > 0 && (
+                <>
+                    <Typography variant="caption" sx={{ fontWeight: "bold", color: "#555" }}>
+                        Yesterday
+                    </Typography>
+                    {groupedSessions.yesterdaySessions.map((session, index) => (
+                        <Tooltip key={index} title={session.text} placement="right" arrow>
+                            <Typography
+                                sx={{
+                                    padding: "8px",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    "&:hover": { backgroundColor: "#f0f0f0" },
+                                }}
+                            >
+                                {session.text}
+                            </Typography>
+                        </Tooltip>
+                    ))}
+                    <Divider sx={{ marginY: "10px" }} />
+                </>
+            )}
+
+            {/* Previous 7 Days Section */}
+            {groupedSessions.previousSessions.length > 0 && (
+                <>
+                    <Typography variant="caption" sx={{ fontWeight: "bold", color: "#555" }}>
+                        Previous 7 Days
+                    </Typography>
+                    {groupedSessions.previousSessions.map((session, index) => (
+                        <Tooltip key={index} title={session.text} placement="right" arrow>
+                            <Typography
+                                sx={{
+                                    padding: "8px",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    "&:hover": { backgroundColor: "#f0f0f0" },
+                                }}
+                            >
+                                {session.text}
+                            </Typography>
+                        </Tooltip>
+                    ))}
+                </>
+            )}
+        </Box>
                 </Box>
             </Box>
 

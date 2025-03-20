@@ -147,14 +147,33 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         setInputValue('');
         setSubmitted(true);
     
+        // Define the payload
+        const payload = {
+            "aplctn_cd": "aedldocai",
+            "app_id": "aedldocai",
+            "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+            "method": "cortex",
+            "user_id": "abc",
+            "session_id": "12345",
+            "model": "llama3.1-70b-elevance",
+            "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+            "prompt": inputValue,
+            "limit_convs": 0,
+           "app_lvl_prefix": "app_lvl_prefix"
+           
+        };
+    
+        // Convert payload to query parameters
+        const queryString = new URLSearchParams(payload).toString();
+        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?${queryString}`;
+    
         // Start SSE immediately
-        const eventSource = new EventSource("http://10.126.192.122:8340/api/cortex/complete");
+        const eventSource = new EventSource(apiUrl);
     
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data.replace("data: ", "").trim());
                 setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); // Display API response
-    
             } catch (error) {
                 console.error("Error parsing SSE message:", error);
             }
@@ -169,6 +188,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             eventSource.close(); // Cleanup when component unmounts
         };
     };
+    
     
     return (
         <Box

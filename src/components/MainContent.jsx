@@ -156,119 +156,53 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     };
     
 
-    // const handleSubmit = () => {
-    //     if (!inputValue.trim()) return; // Prevent empty submissions
-    
-    //     const userMessage = { text: inputValue, fromUser: true };
-    //     setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
-    //     setInputValue('');
-    //     setSubmitted(true);
-    //     setAggregatedResponse(''); 
-    //     // Convert payload to query parameters
-    //     // const queryString = new URLSearchParams(payload).toString();
-    //     const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
-    
-    //     // Start SSE immediately
-    //     const eventSource = new EventSource(apiUrl);
-
-    //     eventSource.onopen = () => {
-    //         console.log("SSE Connection Opened");
-    //     };
-    
-    
-    //     eventSource.onmessage = (event) => {
-    //         try {
-    //             const data = JSON.parse(event.data);
-    
-                
-    //     if (data.choices && data.choices.length > 0) {
-    //         const content = data.choices[0]?.delta?.content || "";
-    //         if (content) {
-    //             setAggregatedResponse((prev) => prev + content);
-    //             typeTextEffect(content);
-    //         }
-    //     }
-    //         } catch (error) {
-    //             console.error("Error parsing SSE message:", error);
-    //         }
-    //     };
-    
-    //     eventSource.onerror = () => {
-    //         console.error("SSE Error: Closing connection");
-    //         eventSource.close();
-    //     };
-    
-    //     return () => {
-    //         eventSource.close(); // Cleanup when component unmounts
-    //     };
-    // };
-    
-    
     const handleSubmit = () => {
         if (!inputValue.trim()) return; // Prevent empty submissions
     
-        // Add user message to the state
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
-        
+        setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
         setSubmitted(true);
-        setAggregatedResponse('');
-    
+        setAggregatedResponse(''); 
+        // Convert payload to query parameters
+        // const queryString = new URLSearchParams(payload).toString();
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
-        // Start SSE connection
+        // Start SSE immediately
         const eventSource = new EventSource(apiUrl);
-    
+
         eventSource.onopen = () => {
             console.log("SSE Connection Opened");
         };
+    
     
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
     
-                if (data.choices && data.choices.length > 0) {
-                    const content = data.choices[0]?.delta?.content || "";
-    
-                    if (content) {
-                        setAggregatedResponse((prev) => prev + content); // Append response
-    
-                        // Update messages with AI response dynamically
-                        setMessages((prevMessages) => {
-                            const lastMessage = prevMessages[prevMessages.length - 1];
-    
-                            if (lastMessage && !lastMessage.fromUser) {
-                                // If last message is from AI, update it
-                                return prevMessages.slice(0, -1).concat({
-                                    text: lastMessage.text + content,
-                                    fromUser: false
-                                });
-                            } else {
-                                // If first AI response, create new message
-                                return [...prevMessages, { text: content, fromUser: false }];
-                            }
-                        });
-                    }
-                }
+                
+        if (data.choices && data.choices.length > 0) {
+            const content = data.choices[0]?.delta?.content || "";
+            if (content) {
+                setAggregatedResponse((prev) => prev + content);
+                typeTextEffect(content);
+            }
+        }
             } catch (error) {
-                console.error(" Error parsing SSE message:", error);
-                eventSource.close();
+                console.error("Error parsing SSE message:", error);
             }
         };
     
-        eventSource.onerror = (event) => {
-            console.error("SSE Error:", event);
+        eventSource.onerror = () => {
+            console.error("SSE Error: Closing connection");
             eventSource.close();
         };
     
-        // Cleanup function to close SSE on unmount
         return () => {
-            console.log("Closing SSE Connection");
-            eventSource.close();
+            eventSource.close(); // Cleanup when component unmounts
         };
     };
-
+    
     
     return (
         <Box
@@ -554,10 +488,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 // <MessageWithFeedback message={message} />
                                 // (index === messages.length - 1 ? displayedText : message.text)
                                 <Typography variant="body1">
-                     {index === messages.length - 1 
-                            ? (displayedText || message.content)  // Ensure displayedText updates dynamically
-                            : message.text
-                        }
+                        {index === messages.length - 1 ? displayedText || message.text : message.text}
                     </Typography>
                             )}
                         </Box>

@@ -3,7 +3,7 @@ import { Box, Button, IconButton, Link, Typography, Divider, Tooltip } from '@mu
 import { FaComments, FaSearch, FaPen, FaSun, FaUser, FaInfoCircle, FaSignOutAlt, FaTrashAlt, FaAngleLeft, FaAngleRight, FaBell, } from 'react-icons/fa'; // Icons
 import logo from '../assets/Logo.jpg';
 
-const Sidebar = ({ collapsed, toggleSidebar, onNewChat }) => {
+const Sidebar = ({ collapsed, toggleSidebar, onNewChat, onPromptSelect }) => {
 
 
     const prompts = [
@@ -143,6 +143,7 @@ const Sidebar = ({ collapsed, toggleSidebar, onNewChat }) => {
                                     backgroundColor: '#f0f0f0', // or any hover color you prefer
                                 },
                             }}
+                            onClick={() => onPromptSelect(prompt)}
                         >
                             <Tooltip title={prompt} placement="right" arrow>
                                 <Typography

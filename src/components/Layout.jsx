@@ -6,6 +6,7 @@ import { Box } from '@mui/material';
 const Layout = () => {
     const [collapsed, setCollapsed] = useState(false); 
     const [resetChat, setResetChat] = useState(false);
+    const [selectedPrompt, setSelectedPrompt] = useState('');
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed); 
@@ -16,10 +17,14 @@ const Layout = () => {
         setTimeout(() => setResetChat(false), 100);  // Reset state after effect
     };
 
+    const handlePromptSelect = (prompt) => {
+        setSelectedPrompt(prompt); // Set the prompt
+    };
+
     return (
         <Box sx={{ display: 'flex', width: '100%' }}>
             {/* Sidebar */}
-            <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} onNewChat={handleNewChat}  />
+            <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} onNewChat={handleNewChat} onPromptSelect={handlePromptSelect}   />
 
             {/* Main Content - Adjusting margin based on sidebar width */}
             <Box
@@ -29,7 +34,7 @@ const Layout = () => {
                     width: '100%',
                 }}
             >
-                <MainContent collapsed={collapsed} toggleSidebar={toggleSidebar} resetChat={resetChat} />
+                <MainContent collapsed={collapsed} toggleSidebar={toggleSidebar} resetChat={resetChat} selectedPrompt={selectedPrompt} />
             </Box>
         </Box>
     );

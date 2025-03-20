@@ -12,7 +12,7 @@ import ApiService from '../services/apiService';
 import logo from '../assets/Logo.jpg';
 
 
-const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
+const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) => {
     const [inputValue, setInputValue] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -69,6 +69,13 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             setInputValue('');  // Clear text input
         }
     }, [resetChat]);
+
+    useEffect(() => {
+        if (selectedPrompt) {
+            setInputValue(selectedPrompt);  // Update input field with prompt text
+            handleSubmit(selectedPrompt);   // Auto-submit the prompt
+        }
+    }, [selectedPrompt]);
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -502,9 +509,9 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 </Box>
 
                 {/* Right Side - Share Button & Account */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol" }}>
 
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
                         Welcome, Balaji!
                     </Typography>
                     {/* Account Dropdown */}

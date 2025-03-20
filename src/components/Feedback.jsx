@@ -113,7 +113,6 @@ const Feedback = ({ message }) => {
 };
 
 const MessageWithFeedback = ({ message }) => {
-    const [message, setMessage] = useState(null);
     // const [displayedText, setDisplayedText] = useState("");
     // const indexRef = useRef(0);
 

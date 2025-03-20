@@ -153,6 +153,11 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         // Start SSE immediately
         const eventSource = new EventSource(apiUrl);
+
+        eventSource.onopen = () => {
+            console.log("SSE Connection Opened");
+        };
+    
     
         eventSource.onmessage = (event) => {
             try {

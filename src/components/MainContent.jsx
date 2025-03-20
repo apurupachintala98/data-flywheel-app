@@ -162,7 +162,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, addChatSession }) =>
         const eventSource = new EventSource(apiUrl);
         let contentBuffer = "";  // Buffer to store incoming content
         let typingTimeout;
-        let aiResponseText = ""; 
 
         eventSource.onopen = () => {
             console.log("SSE Connection Opened");
@@ -178,7 +177,6 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, addChatSession }) =>
 
                     if (newContent) {
                         contentBuffer += newContent; 
-                        aiResponseText += newContent;  // Add new content to the buffer
                         console.log("Updated Buffer:", contentBuffer);
 
                         // Start the typing effect if not already running
@@ -192,17 +190,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, addChatSession }) =>
                 if (data.choices[0]?.finish_reason === "stop") {
                     eventSource.close();
                      // Store AI response as part of the session history
-                const aiMessage = {
-                    text: aiResponseText,
-                    fromUser: false,
-                    timestamp: new Date().toISOString(),
-                };
-
-                addChatSession((prevSessions) => {
-                    return [{ text: inputValue, aiResponse: aiMessage.text, timestamp }, ...prevSessions];
-                });
                 }
-
             } catch (error) {
                 console.error("Error parsing SSE message:", error);
                 eventSource.close();

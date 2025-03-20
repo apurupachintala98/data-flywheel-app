@@ -9,8 +9,9 @@ const Layout = () => {
     const [chatSessions, setChatSessions] = useState([]);
 
     const addChatSession = (newSession) => {
-        setChatSessions((prevSessions) => [newSession, ...prevSessions]); // Add new session at the top
+        setChatSessions((prevSessions) => [{ text: newSession.text, timestamp: newSession.timestamp }, ...prevSessions]);
     };
+
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed); 

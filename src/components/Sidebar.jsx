@@ -30,6 +30,7 @@ const categorizeSessions = (sessions) => {
     return { todaySessions, yesterdaySessions, previousSessions };
 };
 
+
 const Sidebar = ({ collapsed, toggleSidebar, onNewChat, chatSessions }) => {
 
     const [groupedSessions, setGroupedSessions] = useState({
@@ -39,9 +40,10 @@ const Sidebar = ({ collapsed, toggleSidebar, onNewChat, chatSessions }) => {
     });
 
     useEffect(() => {
+        console.log("Updated chatSessions:", chatSessions); // Debugging
         setGroupedSessions(categorizeSessions(chatSessions));
     }, [chatSessions]);
-
+    
     const prompts = [
         'what is the worst measure for h0544?',
         'Which measure for contract H0544 has shown the greatest increase from prior year to current year?',

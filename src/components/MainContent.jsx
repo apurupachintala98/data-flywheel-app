@@ -169,25 +169,27 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         const eventSource = new EventSource(apiUrl);
     
         eventSource.onopen = () => {
-            console.log("SSE Connection Opened");
+            console.log(" SSE Connection Opened");
+        };
+    
+        eventSource.onerror = (error) => {
+            console.error(" SSE Error:", error);
+            eventSource.close();
         };
     
         eventSource.onmessage = (event) => {
+            console.log("SSE Event Received:", event);
+    
             try {
-                let newChunk = event.trim(); // Get raw SSE chunk
-                console.log("New SSE Chunk:", newChunk);
+                let newChunk = event.data; // Get raw SSE chunk
+                console.log(" New SSE Chunk:", newChunk);
     
                 if (newChunk) {
                     setMessages((prevMessages) => [...prevMessages, { text: newChunk, fromUser: false }]); // Display each chunk separately
                 }
             } catch (error) {
-                console.error("Error processing SSE message:", error);
+                console.error(" Error processing SSE message:", error);
             }
-        };
-    
-        eventSource.onerror = () => {
-            console.error("SSE Error: Closing connection");
-            eventSource.close();
         };
     
         return () => {

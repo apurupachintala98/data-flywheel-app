@@ -113,29 +113,56 @@ const Feedback = ({ message }) => {
 };
 
 const MessageWithFeedback = ({ message }) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const indexRef = useRef(0);
+    const [message, setMessage] = useState(null);
+    // const [displayedText, setDisplayedText] = useState("");
+    // const indexRef = useRef(0);
+
+    // useEffect(() => {
+    //     if (message?.text) {
+    //         setDisplayedText(""); // Reset text before animation
+    //         indexRef.current = 0; // Reset index
+
+    //         const interval = setInterval(() => {
+    //             setDisplayedText((prev) => prev + message.text[indexRef.current]);
+    //             indexRef.current += 1;
+
+    //             if (indexRef.current >= message.text.length) {
+    //                 clearInterval(interval);
+    //             }
+    //         }, 30);
+
+    //         return () => clearInterval(interval);
+    //     }
+    // }, [message]);
+
+    // if (!message?.text) {
+    //     console.error("Message is undefined or invalid", message);
+    //     return null;
+    // }
 
     useEffect(() => {
-        if (message?.text) {
-            setDisplayedText(""); // Reset text before animation
-            indexRef.current = 0; // Reset index
+        const eventSource = new EventSource(apiUrl);
 
-            const interval = setInterval(() => {
-                setDisplayedText((prev) => prev + message.text[indexRef.current]);
-                indexRef.current += 1;
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data.replace("data: ", "").trim());
+                setMessage(data); // Set the received message directly
+            } catch (error) {
+                console.error("Error parsing SSE message:", error);
+            }
+        };
 
-                if (indexRef.current >= message.text.length) {
-                    clearInterval(interval);
-                }
-            }, 30);
+        eventSource.onerror = () => {
+            console.error("SSE Error: Closing connection");
+            eventSource.close();
+        };
 
-            return () => clearInterval(interval);
-        }
-    }, [message]);
+        return () => {
+            eventSource.close(); // Cleanup when component unmounts
+        };
+    }, [apiUrl]);
 
     if (!message?.text) {
-        console.error("Message is undefined or invalid", message);
         return null;
     }
 

@@ -164,8 +164,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         };
     
         // Convert payload to query parameters
-        const queryString = new URLSearchParams(payload).toString();
-        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?${queryString}`;
+        // const queryString = new URLSearchParams(payload).toString();
+        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedldocai&app_id=aedldocai&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&user_id=abc&session_id=12345&model=llama3.1-70b-elevance&sys_msg=You+are+a+powerful+AI+assistant+in+providing+accurate+answers.+Be+concise+in+responses+based+on+context.&prompt=who+are+you%3F&limit_convs=0&app_lvl_prefix=null`;
     
         // Start SSE immediately
         const eventSource = new EventSource(apiUrl);

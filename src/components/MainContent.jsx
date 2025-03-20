@@ -144,7 +144,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
 
     const handleSubmit = () => {
         if (!inputValue.trim()) return;
-        const userMessage = { text: inputValue, fromUser: true, timestamp };
+        const userMessage = { text: inputValue, fromUser: true };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
         setInputValue('');

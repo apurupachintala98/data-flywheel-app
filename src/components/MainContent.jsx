@@ -181,7 +181,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
             };
 
             const response = await fetch("http://10.126.192.122:8340/api/cortex/complete", {
-                method: "POST",
+                method: "GET",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });

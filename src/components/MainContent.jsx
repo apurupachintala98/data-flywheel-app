@@ -145,6 +145,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
         const userMessage = { text: inputValue, fromUser: true };
         setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
         setInputValue('');
+        setSubmitted(true);
     
         // Start SSE immediately
         const eventSource = new EventSource("http://10.126.192.122:8340/api/cortex/complete");

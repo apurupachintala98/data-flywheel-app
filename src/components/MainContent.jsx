@@ -189,10 +189,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                 
                 if (newChunk) {
                     setAggregatedResponse((prev) => prev + newChunk); // Store the full concatenated response
-                    
-                    // Display the new content in a smooth typewriter effect
-                    typeTextEffect(newChunk);
-                }
+                                    }
             } catch (error) {
                 console.error("Error processing SSE message:", error);
             }
@@ -497,7 +494,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
                                 (index === messages.length - 1 ? displayedText : message.text)
                             )} */}
 
-{msg.fromUser ? (
+{message.fromUser ? (
                                 <Box
                                     sx={{
                                         padding: '10px',

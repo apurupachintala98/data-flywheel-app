@@ -172,7 +172,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat }) => {
     
         eventSource.onmessage = (event) => {
             try {
-                const data = JSON.parse(event.data.replace("data: ", "").trim());
+                const data = event.data;
                 setMessages((prevMessages) => [...prevMessages, { text: data.message, fromUser: false }]); // Display API response
             } catch (error) {
                 console.error("Error parsing SSE message:", error);

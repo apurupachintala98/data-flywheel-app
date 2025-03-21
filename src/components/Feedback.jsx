@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, IconButton, Typography, Tooltip } from '@mui/material';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrowNightBlue } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Dark theme for SQL
 
 const Feedback = ({ message }) => {
     const [feedback, setFeedback] = useState(null);
@@ -117,10 +119,31 @@ const MessageWithFeedback = ({ message}) => {
         return null;
     }
 
+    const isSQL = message.type === "sql";
+
     return (
+        // <div className="mb-4">
+        //     <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
+        //         {message.text}
+        //     </div>
+        //     {!message.fromUser && <Feedback message={message} />}
+        // </div>
         <div className="mb-4">
-            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
-                {message.text}
+            <div
+                className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : isSQL ? 'bg-gray-900 text-white' : 'bg-gray-200 text-black'}`}
+                style={{
+                    fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol",
+                    textAlign: "left",
+                    padding: isSQL ? '12px' : '8px', // Extra padding for SQL blocks
+                }}
+            >
+                {isSQL ? (
+                    <SyntaxHighlighter language="sql" style={tomorrowNightBlue}>
+                        {message.text}
+                    </SyntaxHighlighter>
+                ) : (
+                    message.text
+                )}
             </div>
             {!message.fromUser && <Feedback message={message} />}
         </div>

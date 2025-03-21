@@ -10,6 +10,9 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MessageWithFeedback from './Feedback';
 import ApiService from '../services/apiService';
 import logo from '../assets/Logo.jpg';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrowNightBlue } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Dark theme
+
 
 
 const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) => {
@@ -139,7 +142,8 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
         try {
             const response = await ApiService.sendTextToSQL(payload);
             const modelResponse = response?.modelreply?.response || "No valid response received.";
-            const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
+            const responseType = response?.modelreply?.type || "text";
+            const assistantMessage = { text: modelResponse || "No response received.", fromUser: false, type: responseType };
             setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
         } catch (error) {

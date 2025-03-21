@@ -112,42 +112,42 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
         );
     };
 
-    // const handleSubmit = async () => {
-    //     if (!inputValue.trim()) return; // Prevent empty submissions
+    const handleSubmit = async () => {
+        if (!inputValue.trim()) return; // Prevent empty submissions
 
-    //     const userMessage = { text: inputValue, fromUser: true };
-    //     setMessages((prevMessages) => [...prevMessages, userMessage]);
-    //     setInputValue('');
-    //     setSubmitted(true);
+        const userMessage = { text: inputValue, fromUser: true };
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
+        setInputValue('');
+        setSubmitted(true);
 
-    //     const payload = {
-    //         "aplctn_cd": "aedldocai",
-    //         "app_id": "aedldocai",
-    //         "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
-    //         "method": "cortex",
-    //         "user_id": "abc",
-    //         "request_id": "12345",
-    //         "model": "llama3.1-70b-elevance",
-    //         "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
-    //         "prompt": inputValue, // User input
-    //         "env": "preprod",
-    //         "region_name": "us-east-1",
-    //         "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
-    //         "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
-    //     };
+        const payload = {
+            "aplctn_cd": "aedldocai",
+            "app_id": "aedldocai",
+            "api_key": "78a799ea-a0f6-11ef-a0ce-15a449f7a8b0",
+            "method": "cortex",
+            "user_id": "abc",
+            "request_id": "12345",
+            "model": "llama3.1-70b-elevance",
+            "sys_msg": "You are a powerful AI assistant in providing accurate answers. Be concise in responses based on context.",
+            "prompt": inputValue, // User input
+            "env": "preprod",
+            "region_name": "us-east-1",
+            "CORTEX_SEARCH_SERVICES": JSON.stringify(selectedSearchModels),
+            "SEMANTIC_MODELS": JSON.stringify(selectedYamlModels),
+        };
 
-    //     try {
-    //         const response = await ApiService.sendTextToSQL(payload);
-    //         const modelResponse = response?.modelreply?.response || "No valid response received.";
-    //         const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
-    //         setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+        try {
+            const response = await ApiService.sendTextToSQL(payload);
+            const modelResponse = response?.modelreply?.response || "No valid response received.";
+            const assistantMessage = { text: modelResponse || "No response received.", fromUser: false };
+            setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
-    //     } catch (error) {
-    //         console.error("Error fetching API response:", error);
-    //         const errorMessage = { text: "An error occurred while fetching data.", fromUser: false };
-    //         setMessages((prevMessages) => [...prevMessages, errorMessage]);
-    //     }
-    // };
+        } catch (error) {
+            console.error("Error fetching API response:", error);
+            const errorMessage = { text: "An error occurred while fetching data.", fromUser: false };
+            setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        }
+    };
 
     // const handleSubmit = () => {
     //     if (!inputValue.trim()) return;
@@ -235,89 +235,89 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
     //     };
     // };
 
-    const handleSubmit = () => {
-        if (!inputValue.trim()) return; // Prevent empty submissions
+    // const handleSubmit = () => {
+    //     if (!inputValue.trim()) return; // Prevent empty submissions
 
-        // Add user message to chat
-        const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
+    //     // Add user message to chat
+    //     const userMessage = { text: inputValue, fromUser: true };
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-        setInputValue('');
-        setSubmitted(true);
-        setAggregatedResponse('');
+    //     setInputValue('');
+    //     setSubmitted(true);
+    //     setAggregatedResponse('');
 
-        const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
+    //     const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
 
-        const eventSource = new EventSource(apiUrl);
-        let contentBuffer = "";  // Buffer to store incoming content
-        let typingTimeout;
+    //     const eventSource = new EventSource(apiUrl);
+    //     let contentBuffer = "";  // Buffer to store incoming content
+    //     let typingTimeout;
 
-        eventSource.onopen = () => {
-            console.log("SSE Connection Opened");
-        };
+    //     eventSource.onopen = () => {
+    //         console.log("SSE Connection Opened");
+    //     };
 
-        eventSource.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                console.log("📩 API Response:", data);
+    //     eventSource.onmessage = (event) => {
+    //         try {
+    //             const data = JSON.parse(event.data);
+    //             console.log("📩 API Response:", data);
 
-                if (data.choices && data.choices.length > 0) {
-                    const newContent = data.choices[0]?.delta?.content || "";
+    //             if (data.choices && data.choices.length > 0) {
+    //                 const newContent = data.choices[0]?.delta?.content || "";
 
-                    if (newContent) {
-                        contentBuffer += newContent; // Add new content to the buffer
-                        console.log("📝 Updated Buffer:", contentBuffer);
+    //                 if (newContent) {
+    //                     contentBuffer += newContent; // Add new content to the buffer
+    //                     console.log("📝 Updated Buffer:", contentBuffer);
 
-                        // Start the typing effect if not already running
-                        if (!typingTimeout) {
-                            typeEffect();
-                        }
-                    }
-                }
+    //                     // Start the typing effect if not already running
+    //                     if (!typingTimeout) {
+    //                         typeEffect();
+    //                     }
+    //                 }
+    //             }
 
-                if (data.choices[0]?.finish_reason === "stop") {
-                    eventSource.close();
-                }
+    //             if (data.choices[0]?.finish_reason === "stop") {
+    //                 eventSource.close();
+    //             }
 
-            } catch (error) {
-                eventSource.close();
-            }
-        };
+    //         } catch (error) {
+    //             eventSource.close();
+    //         }
+    //     };
 
-        eventSource.onerror = (event) => {
-            eventSource.close();
-        };
+    //     eventSource.onerror = (event) => {
+    //         eventSource.close();
+    //     };
 
-        // Function to simulate typing effect
-        function typeEffect() {
-            if (contentBuffer.length === 0) {
-                typingTimeout = null;
-                return;
-            }
+    //     // Function to simulate typing effect
+    //     function typeEffect() {
+    //         if (contentBuffer.length === 0) {
+    //             typingTimeout = null;
+    //             return;
+    //         }
 
-            const nextChar = contentBuffer.charAt(0);
-            contentBuffer = contentBuffer.slice(1); // Remove the first character
+    //         const nextChar = contentBuffer.charAt(0);
+    //         contentBuffer = contentBuffer.slice(1); // Remove the first character
 
-            setMessages((prevMessages) => {
-                const lastMessage = prevMessages[prevMessages.length - 1];
+    //         setMessages((prevMessages) => {
+    //             const lastMessage = prevMessages[prevMessages.length - 1];
 
-                if (lastMessage && !lastMessage.fromUser) {
-                    return prevMessages.slice(0, -1).concat({
-                        text: lastMessage.text + nextChar,
-                        fromUser: false
-                    });
-                } else {
-                    return [...prevMessages, { text: nextChar, fromUser: false }];
-                }
-            });
+    //             if (lastMessage && !lastMessage.fromUser) {
+    //                 return prevMessages.slice(0, -1).concat({
+    //                     text: lastMessage.text + nextChar,
+    //                     fromUser: false
+    //                 });
+    //             } else {
+    //                 return [...prevMessages, { text: nextChar, fromUser: false }];
+    //             }
+    //         });
 
-            typingTimeout = setTimeout(typeEffect, 50);
-        }
+    //         typingTimeout = setTimeout(typeEffect, 50);
+    //     }
 
-        return () => {
-            eventSource.close();
-        };
-    };
+    //     return () => {
+    //         eventSource.close();
+    //     };
+    // };
 
 
     return (

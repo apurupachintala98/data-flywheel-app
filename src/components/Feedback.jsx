@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, IconButton, Typography, Tooltip } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrowNightBlue } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Dark theme for SQL
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'; 
 
 const Feedback = ({ message }) => {
     const [feedback, setFeedback] = useState(null);
@@ -135,10 +135,11 @@ const MessageWithFeedback = ({ message}) => {
                     fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol",
                     textAlign: "left",
                     padding: isSQL ? '12px' : '8px', // Extra padding for SQL blocks
+                    borderRadius: "8px"
                 }}
             >
                 {isSQL ? (
-                    <SyntaxHighlighter language="sql" style={tomorrowNightBlue}>
+                    <SyntaxHighlighter language="sql" style={dracula}>
                         {message.text}
                     </SyntaxHighlighter>
                 ) : (

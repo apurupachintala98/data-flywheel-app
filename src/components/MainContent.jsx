@@ -10,8 +10,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MessageWithFeedback from './Feedback';
 import ApiService from '../services/apiService';
 import logo from '../assets/Logo.jpg';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrowNightBlue } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Dark theme
 
 
 

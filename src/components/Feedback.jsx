@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, IconButton, Typography, Tooltip } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'; 
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'; 
 
 const Feedback = ({ message }) => {
     const [feedback, setFeedback] = useState(null);
@@ -139,7 +139,7 @@ const MessageWithFeedback = ({ message}) => {
                 }}
             >
                 {isSQL ? (
-                    <SyntaxHighlighter language="sql" style={dracula}>
+                    <SyntaxHighlighter language="sql" style={docco}>
                         {message.text}
                     </SyntaxHighlighter>
                 ) : (

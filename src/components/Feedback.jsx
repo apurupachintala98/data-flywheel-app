@@ -122,32 +122,32 @@ const MessageWithFeedback = ({ message}) => {
     const isSQL = message.type === "sql";
 
     return (
-        // <div className="mb-4">
-        //     <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
-        //         {message.text}
-        //     </div>
-        //     {!message.fromUser && <Feedback message={message} />}
-        // </div>
         <div className="mb-4">
-            <div
-                className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : isSQL ? 'bg-gray-900 text-white' : 'bg-gray-200 text-black'}`}
-                style={{
-                    fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol",
-                    textAlign: "left",
-                    padding: isSQL ? '12px' : '8px', // Extra padding for SQL blocks
-                    borderRadius: "8px"
-                }}
-            >
-                {isSQL ? (
-                    <SyntaxHighlighter language="sql" style={dracula}>
-                        {message.text}
-                    </SyntaxHighlighter>
-                ) : (
-                    message.text
-                )}
+            <div className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`} style={{ fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol", textAlign: "left" }}>
+                {message.text}
             </div>
             {!message.fromUser && <Feedback message={message} />}
         </div>
+        // <div className="mb-4">
+        //     <div
+        //         className={`p-2 rounded-lg ${message.fromUser ? 'bg-blue-500 text-white' : isSQL ? 'bg-gray-900 text-white' : 'bg-gray-200 text-black'}`}
+        //         style={{
+        //             fontFamily: "ui-sans-serif,-apple-system,system-ui,Segoe UI,Helvetica,Apple Color Emoji,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol",
+        //             textAlign: "left",
+        //             padding: isSQL ? '12px' : '8px', // Extra padding for SQL blocks
+        //             borderRadius: "8px"
+        //         }}
+        //     >
+        //         {isSQL ? (
+        //             <SyntaxHighlighter language="sql" style={dracula}>
+        //                 {message.text}
+        //             </SyntaxHighlighter>
+        //         ) : (
+        //             message.text
+        //         )}
+        //     </div>
+        //     {!message.fromUser && <Feedback message={message} />}
+        // </div>
     );
 };
 

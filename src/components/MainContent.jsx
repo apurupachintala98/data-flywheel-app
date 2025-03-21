@@ -613,7 +613,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
                     flexDirection: 'column',
                     alignItems: 'center',
                     width: '100%',
-                    marginTop: messages.length === 0 ? '30%' : '40px',  // Add spacing above input field
+                    marginTop: messages.length === 0 ? '36%' : '40px',  // Add spacing above input field
                 }}>
 
                     <Box

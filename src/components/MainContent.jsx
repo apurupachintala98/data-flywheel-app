@@ -566,7 +566,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
 
                 {messages.length === 0 && (
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                        Ask you Data Anything
+                        Ask your Data Anything.
                     </Typography>
                 )}
 

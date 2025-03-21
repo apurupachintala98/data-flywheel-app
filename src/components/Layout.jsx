@@ -26,7 +26,6 @@ const Layout = () => {
             {/* Sidebar */}
             <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} onNewChat={handleNewChat} onPromptSelect={handlePromptSelect}   />
 
-            {/* Main Content - Adjusting margin based on sidebar width */}
             <Box
                 sx={{
                     flexGrow: 1, // Allow content to take the remaining space

@@ -566,7 +566,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
 
                 {messages.length === 0 && (
                     <Typography variant="h5" sx={{ marginBottom: '20px', fontWeight: "600", fontSize: "28px" }}>
-                        Ask your Data Anything.
+                         Data @ your Fingertips.
                     </Typography>
                 )}
 
@@ -667,8 +667,11 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
                                 }}
                             />
 
-
-
+{messages.length !== 0 && (
+<IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+                                <FaArrowUp color="#fff" />
+                            </IconButton>
+)}
                         </Box>
                         <Box
                             sx={{
@@ -681,7 +684,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
                         >
 
                             {messages.length === 0 && (
-                                <Box sx={{ display: 'flex', gap: '8px' }}>
+                                <><Box sx={{ display: 'flex', gap: '8px' }}>
                                     <Button
                                         variant="outlined"
                                         component="a"
@@ -738,13 +741,10 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
                                     >
                                         Upload your Data
                                     </Button>
-                                </Box>
-
-                            )}
-                            {/* Submit Button Aligned to Right */}
-                            <IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
-                                <FaArrowUp color="#fff" />
-                            </IconButton>
+                                </Box><IconButton onClick={handleSubmit} sx={{ backgroundColor: "#5d5d5d", borderRadius: "50%" }}>
+                                        <FaArrowUp color="#fff" />
+                                    </IconButton></>
+                             )}
                         </Box>
 
                     </Box>

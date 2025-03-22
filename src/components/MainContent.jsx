@@ -320,8 +320,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
         if (!inputValue.trim()) return;
     
         const userMessage = { text: inputValue, fromUser: true };
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
-    
+        setMessages((prev) => [...prev, userMessage]);
         setInputValue('');
         setSubmitted(true);
     
@@ -329,59 +328,58 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
     
         const eventSource = new EventSource(apiUrl);
     
-        let charQueue = '';         // Store characters to type
-        let typingTimeout = null;
+        let textQueue = '';        // All raw text accumulated from stream
+        let typing = false;
     
         eventSource.onopen = () => {
-            console.log("SSE connection opened.");
+            console.log('SSE Connection Opened');
         };
     
         eventSource.onmessage = (event) => {
-            const newData = event.data;
+            const incoming = event.data;
     
-            if (newData?.trim()) {
-                // Just queue up raw incoming text
-                charQueue += newData;
+            if (incoming) {
+                // Add to queue
+                textQueue += incoming;
     
-                if (!typingTimeout) {
-                    typeEffect();
+                // Start typing only once
+                if (!typing) {
+                    typing = true;
+                    typeNextChar();
                 }
             }
         };
     
         eventSource.onerror = (event) => {
-            console.error("SSE error:", event);
+            console.error('SSE Error:', event);
             eventSource.close();
         };
     
-        function typeEffect() {
-            if (charQueue.length === 0) {
-                typingTimeout = null;
+        const typeNextChar = () => {
+            if (textQueue.length === 0) {
+                typing = false;
                 return;
             }
     
-            const nextChar = charQueue.charAt(0);
-            charQueue = charQueue.slice(1);
+            const char = textQueue.charAt(0);
+            textQueue = textQueue.slice(1);
     
-            setMessages((prevMessages) => {
-                const lastMessage = prevMessages[prevMessages.length - 1];
+            setMessages((prev) => {
+                const last = prev[prev.length - 1];
     
-                if (lastMessage && !lastMessage.fromUser) {
-                    return [
-                        ...prevMessages.slice(0, -1),
-                        { ...lastMessage, text: lastMessage.text + nextChar }
-                    ];
+                if (last && !last.fromUser) {
+                    return [...prev.slice(0, -1), { text: last.text + char, fromUser: false }];
                 } else {
-                    return [...prevMessages, { text: nextChar, fromUser: false }];
+                    return [...prev, { text: char, fromUser: false }];
                 }
             });
     
-            typingTimeout = setTimeout(typeEffect, 30); // Typing speed
-        }
+            setTimeout(typeNextChar, 30); // Typing speed
+        };
     
         return () => {
+            console.log('Cleaning up SSE');
             eventSource.close();
-            clearTimeout(typingTimeout);
         };
     };
     

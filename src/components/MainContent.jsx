@@ -316,7 +316,7 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
     //     };
     // };
     
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!inputValue.trim()) return;
     
         const userMessage = { text: inputValue, fromUser: true };
@@ -326,62 +326,60 @@ const MainContent = ({ collapsed, toggleSidebar, resetChat, selectedPrompt }) =>
     
         const apiUrl = `http://10.126.192.122:8340/api/cortex/complete?aplctn_cd=aedl&app_id=aedl&api_key=78a799ea-a0f6-11ef-a0ce-15a449f7a8b0&method=cortex&model=llama3.1-70b-elevance&sys_msg=You%20are%20powerful%20AI%20assistant%20in%20providing%20accurate%20answers%20always.%20Be%20Concise%20in%20providing%20answers%20based%20on%20context.&limit_convs=0&prompt=Who%20are%20you&session_id=9bf28839-09bd-45a5-981f-d1d257afacc8`;
     
-        const eventSource = new EventSource(apiUrl);
+        try {
+            const response = await fetch(apiUrl);
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
     
-        let textQueue = '';        // All raw text accumulated from stream
-        let typing = false;
+            let fullText = '';
+            let typingQueue = '';
+            let isTyping = false;
     
-        eventSource.onopen = () => {
-            console.log('SSE Connection Opened');
-        };
+            const typeEffect = () => {
+                if (typingQueue.length === 0) {
+                    isTyping = false;
+                    return;
+                }
     
-        eventSource.onmessage = (event) => {
-            const incoming = event.data;
+                const nextChar = typingQueue.charAt(0);
+                typingQueue = typingQueue.slice(1);
     
-            if (incoming) {
-                // Add to queue
-                textQueue += incoming;
+                setMessages((prev) => {
+                    const last = prev[prev.length - 1];
+                    if (last && !last.fromUser) {
+                        return [
+                            ...prev.slice(0, -1),
+                            { ...last, text: last.text + nextChar },
+                        ];
+                    } else {
+                        return [...prev, { text: nextChar, fromUser: false }];
+                    }
+                });
     
-                // Start typing only once
-                if (!typing) {
-                    typing = true;
-                    typeNextChar();
+                setTimeout(typeEffect, 30); // typing speed
+            };
+    
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+    
+                const chunk = decoder.decode(value, { stream: true });
+                fullText += chunk;
+                typingQueue += chunk;
+    
+                if (!isTyping) {
+                    isTyping = true;
+                    typeEffect();
                 }
             }
-        };
     
-        eventSource.onerror = (event) => {
-            console.error('SSE Error:', event);
-            eventSource.close();
-        };
+            console.log("Full response:", fullText);
     
-        const typeNextChar = () => {
-            if (textQueue.length === 0) {
-                typing = false;
-                return;
-            }
-    
-            const char = textQueue.charAt(0);
-            textQueue = textQueue.slice(1);
-    
-            setMessages((prev) => {
-                const last = prev[prev.length - 1];
-    
-                if (last && !last.fromUser) {
-                    return [...prev.slice(0, -1), { text: last.text + char, fromUser: false }];
-                } else {
-                    return [...prev, { text: char, fromUser: false }];
-                }
-            });
-    
-            setTimeout(typeNextChar, 30); // Typing speed
-        };
-    
-        return () => {
-            console.log('Cleaning up SSE');
-            eventSource.close();
-        };
+        } catch (err) {
+            console.error("Streaming error:", err);
+        }
     };
+    
     
 
     return (
